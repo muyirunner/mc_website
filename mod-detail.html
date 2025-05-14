@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工业工艺模组详情 - MC百科</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 引入像素风格字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* 模组详情页面特定样式 */
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* 模组头部区域 */
+        .mod-header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .mod-banner {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 4px solid #8dc63f;
+            margin-bottom: 1.5rem;
+            image-rendering: pixelated;
+        }
+
+        .mod-title {
+            color: #2e7d32;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .mod-subtitle {
+            color: #555;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* 模组功能介绍区域 */
+        .mod-features {
+            margin-bottom: 3rem;
+            background-color: rgba(141, 198, 63, 0.1);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 3px solid #ddd;
+        }
+
+        .section-title {
+            color: #2e7d32;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px dashed #8dc63f;
+            display: inline-block;
+        }
+
+        .features-text {
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .features-screenshots {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .screenshot {
+            width: 100%;
+            border-radius: 8px;
+            border: 3px solid #8dc63f;
+            transition: all 0.3s ease;
+            image-rendering: pixelated;
+        }
+
+        .screenshot:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 安装方法区域 */
+        .mod-installation {
+            margin-bottom: 3rem;
+            background-color: rgba(46, 125, 50, 0.1);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 3px solid #ddd;
+        }
+
+        .installation-steps {
+            counter-reset: step;
+            padding-left: 2rem;
+        }
+
+        .installation-steps li {
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 2rem;
+            list-style-type: none;
+        }
+
+        .installation-steps li::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: -1.5rem;
+            top: 0;
+            background-color: #8dc63f;
+            color: white;
+            width: 1.8rem;
+            height: 1.8rem;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            border: 2px solid #5a8017;
+        }
+
+        /* 评分系统区域 */
+        .mod-rating {
+            margin-bottom: 3rem;
+            background-color: rgba(255, 193, 7, 0.1);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 3px solid #ddd;
+            text-align: center;
+        }
+
+        .rating-stars {
+            display: flex;
+            justify-content: center;
+            margin: 1.5rem 0;
+            gap: 0.5rem;
+        }
+
+        .star {
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .star:hover {
+            transform: scale(1.2);
+        }
+
+        .rating-score {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff9800;
+        }
+
+        /* 返回顶部按钮 */
+        .custom-back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            transform: translateY(20px);
+        }
+
+        .custom-back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .custom-back-to-top img {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(141, 198, 63, 0.8);
+            padding: 8px;
+            border-radius: 50%;
+            border: 2px solid #5a8017;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .custom-back-to-top:hover img {
+            background-color: #8dc63f;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .mod-title {
+                font-size: 2rem;
+            }
+
+            .features-screenshots {
+                grid-template-columns: 1fr;
+            }
+
+            .star {
+                width: 30px;
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="img/MC百科像素风Logo.png" alt="MC百科Logo" class="logo">
+            <h1>MC百科</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="basic.html">新手入门</a></li>
+                <li><a href="advanced.html">进阶技巧</a></li>
+                <li><a href="mod.html" class="active">模组介绍</a></li>
+                <li><a href="video.html">视频推荐</a></li>
+                <li><a href="share.html">玩家心得</a></li>
+                <li><a href="search.html">资源搜索</a></li>
+                <li><a href="game.html">生物图鉴</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="content-section">
+            <!-- 模组头部区域 -->
+            <section class="mod-header">
+                <img src="img/mod-detail-banner.png" alt="工业工艺模组横幅" class="mod-banner">
+                <h1 class="mod-title">工业工艺模组（例子模组名）</h1>
+                <p class="mod-subtitle">支持版本：1.12.2 / 作者：Notch / 最新版本：v5.6</p>
+            </section>
+
+            <!-- 模组功能介绍区域 -->
+            <section class="mod-features">
+                <h2 class="section-title">功能简介</h2>
+                <div class="features-text">
+                    <p>工业工艺（Industrial Craft）是Minecraft最著名的科技模组之一，它为游戏添加了电力系统、高级机械和各种新材料，让玩家能够在方块世界中体验工业发展的乐趣。</p>
+                    <p>模组核心是电力系统（EU能源），玩家需要通过太阳能板、风力发电机或核反应堆等设施产生电力，再通过线缆输送至各种机器进行加工和制造。模组还引入了采矿机、自动加工机、喷气背包等设备，极大地丰富了游戏内容。
+                    </p>
+                    <p>此外，工业工艺还添加了多种新材料和工具，如铜、锡、铀等金属，以及钻石电钻、纳米剑等高级工具和武器，这些物品拥有更高的效率和特殊功能。</p>
+                </div>
+
+                <div class="features-screenshots">
+                    <img src="img/mod-detail-1.png" alt="工业工艺功能截图1" class="screenshot">
+                    <img src="img/mod-detail-2.png" alt="工业工艺功能截图2" class="screenshot">
+                </div>
+            </section>
+
+            <!-- 安装方法区域 -->
+            <section class="mod-installation">
+                <h2 class="section-title">安装方法</h2>
+                <ol class="installation-steps">
+                    <li>前往<a href="#" target="_blank">官方网站</a>或<a href="#"
+                            target="_blank">CurseForge</a>下载最新版本的工业工艺模组（.jar文件）</li>
+                    <li>确保已安装Minecraft Forge框架，版本需与模组要求的游戏版本一致（本例中为1.12.2）</li>
+                    <li>找到Minecraft游戏目录下的mods文件夹（通常位于.minecraft/mods/）</li>
+                    <li>将下载好的模组.jar文件放入mods文件夹中</li>
+                    <li>启动游戏并确认模组已正确加载（可在模组菜单中查看）</li>
+                    <li>开始享受工业工艺模组带来的全新游戏体验！</li>
+                </ol>
+            </section>
+
+            <!-- 评分系统区域 -->
+            <section class="mod-rating">
+                <h2 class="section-title">玩家评分</h2>
+                <p>点击星星为这个模组评分：</p>
+
+                <div class="rating-stars" id="star-rating">
+                    <img src="img/star-filled.png" alt="星星1" class="star" data-rating="1">
+                    <img src="img/star-filled.png" alt="星星2" class="star" data-rating="2">
+                    <img src="img/star-filled.png" alt="星星3" class="star" data-rating="3">
+                    <img src="img/star-filled.png" alt="星星4" class="star" data-rating="4">
+                    <img src="img/star-empty.png" alt="星星5" class="star" data-rating="5">
+                </div>
+
+                <p class="rating-score" id="rating-score">当前评分：4.0/5</p>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 MC百科. 保留所有权利。作者：杨汶川</p>
+            <p>本网站仅用于学习和分享，与Mojang和Microsoft没有官方关联。</p>
+            <p>联系方式：13325766744 | 邮箱：641339238@qq.com</p>
+        </div>
+    </footer>
+
+    <div class="custom-back-to-top" id="backToTop">
+        <a href="#"><img src="img/像素上箭头.png" alt="返回顶部"></a>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        // 返回顶部按钮脚本
+        document.addEventListener('DOMContentLoaded', function () {
+            const backToTopButton = document.getElementById('backToTop');
+
+            // 监听滚动事件
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+            });
+
+            // 点击返回顶部
+            backToTopButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // 评分系统
+            const stars = document.querySelectorAll('.star');
+            const ratingScore = document.getElementById('rating-score');
+            let currentRating = 4; // 默认评分为4
+
+            stars.forEach(star => {
+                star.addEventListener('click', function () {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    currentRating = rating;
+                    updateStars(rating);
+                    ratingScore.textContent = `当前评分：${rating}.0/5`;
+                });
+            });
+
+            function updateStars(count) {
+                stars.forEach((star, index) => {
+                    if (index < count) {
+                        star.src = "img/star-filled.png";
+                    } else {
+                        star.src = "img/star-empty.png";
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

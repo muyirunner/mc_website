@@ -1,0 +1,1267 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>进阶技巧 - MC百科</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 引入像素风格字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- 引入AOS动画库 -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <style>
+        /* 页面特定样式 */
+        body {
+            position: relative;
+            overflow-x: hidden;
+            background: url('img/pixel-bg.png') repeat;
+        }
+
+        /* 悬浮粒子效果 */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background-image: url('img/command_block.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.1;
+            image-rendering: pixelated;
+            animation: floatParticle var(--float-duration, 20s) ease-in-out infinite;
+            filter: hue-rotate(var(--hue-rotate, 0deg));
+            width: 16px;
+            height: 16px;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            50% {
+                transform: translate(var(--float-x, 20px), var(--float-y, -20px)) rotate(var(--rotate, 15deg));
+            }
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+        }
+
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            position: relative;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2e7d32;
+            font-size: 2.5rem;
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+            position: relative;
+            animation: titlePulse 3s infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% {
+                transform: scale(1);
+                text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+            }
+            50% {
+                transform: scale(1.03);
+                text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.15), 0 0 15px rgba(141, 198, 63, 0.5);
+            }
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #8dc63f, transparent);
+            border-radius: 2px;
+        }
+
+        .content-card {
+            background-color: white;
+            border: 4px solid #ddd;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #8dc63f, #74a534);
+            z-index: 1;
+        }
+
+        .content-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 20px rgba(141, 198, 63, 0.2);
+            border-color: #8dc63f;
+        }
+
+        .content-card h2 {
+            color: #2e7d32;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #8dc63f;
+            padding-bottom: 0.8rem;
+            font-size: 1.8rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .content-card h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #8dc63f, transparent);
+            border-radius: 2px;
+            animation: borderPulse 3s infinite;
+        }
+
+        @keyframes borderPulse {
+            0%, 100% {
+                opacity: 0.5;
+                width: 30%;
+            }
+            50% {
+                opacity: 1;
+                width: 100%;
+            }
+        }
+
+        .card-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .card-text {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-text p {
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+        }
+
+        .card-image {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.5s ease;
+        }
+
+        .card-image::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 2px dashed rgba(141, 198, 63, 0.3);
+            border-radius: 8px;
+            z-index: -1;
+            animation: borderRotate 20s linear infinite;
+        }
+
+        @keyframes borderRotate {
+            0% {
+                border-radius: 8px;
+            }
+            25% {
+                border-radius: 12px 8px 16px 8px;
+            }
+            50% {
+                border-radius: 16px 8px 8px 12px;
+            }
+            75% {
+                border-radius: 8px 16px 8px 16px;
+            }
+            100% {
+                border-radius: 8px;
+            }
+        }
+
+        .card-image img {
+            max-width: 100%;
+            height: auto;
+            border: 3px solid #8dc63f;
+            border-radius: 8px;
+            image-rendering: pixelated;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            filter: brightness(1);
+        }
+
+        .card-image img:hover {
+            transform: scale(1.08) translateY(-10px) rotate(1deg);
+            border-color: #74a534;
+            box-shadow: 0 15px 30px rgba(141, 198, 63, 0.3);
+            filter: brightness(1.05);
+        }
+
+        .tip-box {
+            background-color: rgba(141, 198, 63, 0.15);
+            border-left: 4px solid #8dc63f;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 12px 12px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .tip-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(141, 198, 63, 0.2), transparent);
+            z-index: 0;
+        }
+
+        .tip-box:hover {
+            background-color: rgba(141, 198, 63, 0.2);
+            transform: translateX(5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .tip-icon {
+            width: 36px;
+            height: 36px;
+            image-rendering: pixelated;
+            margin-top: 2px;
+            z-index: 1;
+            filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .tip-content {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 技能进度条 */
+        .skill-bar-container {
+            margin: 2rem 0;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .skill-bar {
+            margin: 1rem 0;
+        }
+
+        .skill-bar-title {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .skill-progress {
+            height: 20px;
+            background-color: #eeeeee;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .skill-progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            width: 0;
+            transition: width 1.5s cubic-bezier(0.1, 0.7, 0.1, 1);
+            background: linear-gradient(90deg, #8dc63f, #74a534);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.4) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: progress-shine 2s infinite;
+        }
+
+        @keyframes progress-shine {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* 3D卡片效果 */
+        .minecraft-block {
+            width: 64px;
+            height: 64px;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(15deg) rotateY(15deg);
+            transition: transform 0.5s ease;
+            margin: 2rem auto;
+            cursor: pointer;
+        }
+
+        .minecraft-block:hover {
+            transform: rotateX(30deg) rotateY(30deg) scale(1.2);
+        }
+
+        .minecraft-block-face {
+            position: absolute;
+            width: 64px;
+            height: 64px;
+            background-size: cover;
+            backface-visibility: hidden;
+            image-rendering: pixelated;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .minecraft-block-top {
+            transform: rotateX(90deg) translateZ(32px);
+        }
+
+        .minecraft-block-bottom {
+            transform: rotateX(-90deg) translateZ(32px);
+        }
+
+        .minecraft-block-front {
+            transform: translateZ(32px);
+        }
+
+        .minecraft-block-back {
+            transform: rotateY(180deg) translateZ(32px);
+        }
+
+        .minecraft-block-left {
+            transform: rotateY(-90deg) translateZ(32px);
+        }
+
+        .minecraft-block-right {
+            transform: rotateY(90deg) translateZ(32px);
+        }
+        
+        /* 大型命令方块特殊样式 */
+        #large-command-block {
+            width: 128px;
+            height: 128px;
+            margin-bottom: 30px;
+            cursor: pointer;
+        }
+        
+        #large-command-block .minecraft-block-face {
+            width: 128px;
+            height: 128px;
+            background-image: url('img/command_block.png');
+            background-size: cover;
+        }
+        
+        #large-command-block .minecraft-block-top {
+            transform: rotateX(90deg) translateZ(64px);
+        }
+        
+        #large-command-block .minecraft-block-bottom {
+            transform: rotateX(-90deg) translateZ(64px);
+        }
+        
+        #large-command-block .minecraft-block-front {
+            transform: translateZ(64px);
+        }
+        
+        #large-command-block .minecraft-block-back {
+            transform: rotateY(180deg) translateZ(64px);
+        }
+        
+        #large-command-block .minecraft-block-left {
+            transform: rotateY(-90deg) translateZ(64px);
+        }
+        
+        #large-command-block .minecraft-block-right {
+            transform: rotateY(90deg) translateZ(64px);
+        }
+
+        /* 修改原有的轮播图样式 */
+        .carousel {
+            display: flex;
+            overflow-x: hidden;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            margin: 2rem 0;
+            position: relative;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .carousel::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #8dc63f, #74a534);
+            z-index: 10;
+        }
+
+        .carousel-item {
+            flex: 0 0 100%;
+            scroll-snap-align: start;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            transition: transform 0.5s ease;
+        }
+
+        .carousel:hover .carousel-item img {
+            transform: scale(1.05);
+        }
+
+        .carousel-nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+            gap: 10px;
+        }
+
+        .carousel-button {
+            background-color: rgba(221, 221, 221, 0.8);
+            border: none;
+            border-radius: 20px;
+            width: 40px;
+            height: 8px;
+            margin: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carousel-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.3s ease;
+        }
+
+        .carousel-button:hover::after {
+            left: 100%;
+        }
+
+        .carousel-button.active {
+            background: linear-gradient(90deg, #8dc63f, #74a534);
+            width: 60px;
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(221, 221, 221, 0.4);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8dc63f, #74a534);
+            border-radius: 10px;
+            border: 3px solid transparent;
+            background-clip: content-box;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #74a534, #5d8a2a);
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+
+        /* 添加淡入淡出动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+        
+        /* Minecraft风格按钮 */
+        .minecraft-btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #5d8a2a;
+            background-color: #8dc63f;
+            color: white;
+            font-weight: bold;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+            image-rendering: pixelated;
+            position: relative;
+            transition: all 0.1s ease;
+            border-radius: 0;
+            text-shadow: 1px 1px rgba(0,0,0,0.3);
+            outline: none;
+        }
+        
+        .minecraft-btn:hover {
+            background-color: #9ddd47;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .minecraft-btn:active {
+            background-color: #74a534;
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+            transform: translateY(1px);
+        }
+        
+        .minecraft-btn.small {
+            padding: 2px 8px;
+            font-size: 12px;
+        }
+        
+        /* 代码块样式 */
+        .code-block {
+            background-color: #2c2c2c;
+            border-left: 4px solid #8dc63f;
+            padding: 12px 15px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 0 4px 4px 0;
+            position: relative;
+        }
+        
+        .code-block code {
+            color: #f1f1f1;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        /* 复制成功动画 */
+        @keyframes copiedFeedback {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .copied {
+            animation: copiedFeedback 0.3s ease;
+            background-color: #74a534 !important;
+        }
+        
+        /* 返回顶部按钮样式 */
+        .custom-back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(141, 198, 63, 0.8);
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .custom-back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .custom-back-to-top:hover {
+            background-color: rgba(141, 198, 63, 1);
+            transform: translateY(-5px);
+        }
+        
+        .custom-back-to-top img {
+            width: 25px;
+            height: 25px;
+            transition: transform 0.3s ease;
+        }
+        
+        .custom-back-to-top:hover img {
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 粒子效果容器 -->
+    <div class="particles-container" id="particlesContainer"></div>
+
+    <header>
+        <div class="logo-container">
+            <img src="img/MC百科像素风Logo.png" alt="MC百科Logo" class="logo">
+            <h1>MC百科</h1>
+        </div>
+        <div class="menu-toggle" onclick="toggleMobileMenu()"></div>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="basic.html">新手入门</a></li>
+                <li><a href="advanced.html" class="active">进阶技巧</a></li>
+                <li><a href="mod.html">模组介绍</a></li>
+                <li><a href="video.html">视频推荐</a></li>
+                <li><a href="share.html">玩家心得</a></li>
+                <li><a href="search.html">资源搜索</a></li>
+                <li><a href="game.html">生物图鉴</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="banner">
+        <img src="img/redstone-demo.png" alt="进阶技巧" class="banner-img">
+        <div class="banner-text banner-text-animated">
+            <h2>进阶技巧指南</h2>
+            <p>提升你的游戏体验，掌握高级生存和建造技巧</p>
+        </div>
+        <img src="img/像素下箭头.png" alt="向下滚动" class="scroll-indicator" onclick="scrollToMainContent()">
+    </div>
+
+    <main>
+        <div class="content-section">
+            <h1 class="page-title" data-aos="fade-down">进阶技巧</h1>
+
+            <!-- 添加技能进度条展示 -->
+            <div class="content-card" data-aos="fade-up">
+                <h2>MC进阶技能掌握度</h2>
+                <p>学习和掌握Minecraft的进阶技巧需要不断的实践和探索。以下是一些常见进阶技能的难度和重要性评估，帮助您规划学习路径。</p>
+                
+                <div class="skill-bar-container">
+                    <div class="skill-bar">
+                        <div class="skill-bar-title">
+                            <span>红石机械设计</span>
+                            <span>专家级</span>
+                        </div>
+                        <div class="skill-progress">
+                            <div class="skill-progress-bar" data-value="90"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-bar">
+                        <div class="skill-bar-title">
+                            <span>建筑结构设计</span>
+                            <span>进阶级</span>
+                        </div>
+                        <div class="skill-progress">
+                            <div class="skill-progress-bar" data-value="75"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-bar">
+                        <div class="skill-bar-title">
+                            <span>自动化农场</span>
+                            <span>中级</span>
+                        </div>
+                        <div class="skill-progress">
+                            <div class="skill-progress-bar" data-value="85"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-bar">
+                        <div class="skill-bar-title">
+                            <span>极限生存技巧</span>
+                            <span>高级</span>
+                        </div>
+                        <div class="skill-progress">
+                            <div class="skill-progress-bar" data-value="65"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-bar">
+                        <div class="skill-bar-title">
+                            <span>洞穴探索技巧</span>
+                            <span>基础级</span>
+                        </div>
+                        <div class="skill-progress">
+                            <div class="skill-progress-bar" data-value="80"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3D方块展示 -->
+            <div class="content-card" data-aos="fade-up">
+                <h2>关键资源方块</h2>
+                <p>进阶玩家需要熟悉这些重要的方块及其特性。将鼠标悬停在方块上可以查看不同角度的效果。</p>
+                
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin-top: 30px;">
+                    <div>
+                        <div class="minecraft-block">
+                            <div class="minecraft-block-face minecraft-block-front" style="background-image: url('img/redstone_block.png'); background-size: cover;"></div>
+                            <div class="minecraft-block-face minecraft-block-back" style="background-image: url('img/redstone_block.png'); background-size: cover;"></div>
+                            <div class="minecraft-block-face minecraft-block-left" style="background-image: url('img/redstone_block.png'); background-size: cover;"></div>
+                            <div class="minecraft-block-face minecraft-block-right" style="background-image: url('img/redstone_block.png'); background-size: cover;"></div>
+                            <div class="minecraft-block-face minecraft-block-top" style="background-image: url('img/redstone_block.png'); background-size: cover;"></div>
+                            <div class="minecraft-block-face minecraft-block-bottom" style="background-image: url('img/redstone_block.png'); background-size: cover;"></div>
+                        </div>
+                        <p style="text-align: center; margin-top: 15px;">红石块</p>
+                    </div>
+                    
+                    <div>
+                        <div class="minecraft-block">
+                            <div class="minecraft-block-face minecraft-block-front" style="background-image: url('img/observer_block.png'); background-size: cover;"></div>
+                            <div class="minecraft-block-face minecraft-block-back" style="background-image: url('img/observer_block.png'); background-size: cover; transform: rotate(180deg);"></div>
+                            <div class="minecraft-block-face minecraft-block-left" style="background-image: url('img/observer_block.png'); background-size: cover; transform: rotate(90deg);"></div>
+                            <div class="minecraft-block-face minecraft-block-right" style="background-image: url('img/observer_block.png'); background-size: cover; transform: rotate(-90deg);"></div>
+                            <div class="minecraft-block-face minecraft-block-top" style="background-image: url('img/observer_block.png'); background-size: cover; transform: rotate(0deg);"></div>
+                            <div class="minecraft-block-face minecraft-block-bottom" style="background-image: url('img/observer_block.png'); background-size: cover; transform: rotate(180deg);"></div>
+                        </div>
+                        <p style="text-align: center; margin-top: 15px;">侦测器</p>
+                    </div>
+                    
+                    <div>
+                        <div class="minecraft-block">
+                            <div class="minecraft-block-face minecraft-block-front" style="background-image: url('img/command_block.png'); background-size: cover;"></div>
+                            <div class="minecraft-block-face minecraft-block-back" style="background-image: url('img/command_block.png'); background-size: cover;"></div>
+                            <div class="minecraft-block-face minecraft-block-left" style="background-image: url('img/command_block.png'); background-size: cover;"></div>
+                            <div class="minecraft-block-face minecraft-block-right" style="background-image: url('img/command_block.png'); background-size: cover;"></div>
+                            <div class="minecraft-block-face minecraft-block-top" style="background-image: url('img/command_block.png'); background-size: cover;"></div>
+                            <div class="minecraft-block-face minecraft-block-bottom" style="background-image: url('img/command_block.png'); background-size: cover;"></div>
+                        </div>
+                        <p style="text-align: center; margin-top: 15px;">命令方块</p>
+                    </div>
+                </div>
+            </div>
+
+            <section class="content-card" data-aos="fade-right" data-aos-delay="100">
+                <h2>红石电路基础</h2>
+                <div class="card-content">
+                    <div class="card-text">
+                        <p>红石是《我的世界》中的一种特殊资源，可以用来制作复杂的电路和机械装置。掌握红石的基础知识，将使你能够创建从简单门到复杂计算机的各种装置。</p>
+
+                        <h3>基本元件:</h3>
+                        <ul>
+                            <li><strong>红石粉</strong>：基础导线，可传输红石信号，信号强度会随距离衰减</li>
+                            <li><strong>红石火把</strong>：提供持续信号源，也可作为反相器(NOT门)</li>
+                            <li><strong>红石中继器</strong>：延长信号，防止衰减，可设置延迟(1-4刻)</li>
+                            <li><strong>红石比较器</strong>：比较容器内物品数量，或测量方块状态</li>
+                            <li><strong>活塞</strong>：在接收到红石信号时推动方块，粘性活塞可拉回方块</li>
+                        </ul>
+
+                        <h3>逻辑门:</h3>
+                        <p>红石电路可以实现各种逻辑操作，这是构建复杂系统的基础:</p>
+                        <ul>
+                            <li><strong>AND门</strong>：当两个输入都有信号时才输出信号</li>
+                            <li><strong>OR门</strong>：当任一输入有信号时输出信号</li>
+                            <li><strong>NOT门</strong>：反转输入信号（红石火把的基本功能）</li>
+                            <li><strong>XOR门</strong>：当且仅当一个输入有信号时输出信号</li>
+                        </ul>
+
+                        <div class="redstone-schematic">
+                            红石门示意图(AND门):
+                            ┌─────────┐
+                            │ 输入A │
+                            └────┬────┘
+                            │ ┌─────────┐
+                            └─────┤ │
+                            │ 输出 │
+                            ┌─────┤ │
+                            │ └─────────┘
+                            ┌────┴────┐
+                            │ 输入B │
+                            └─────────┘
+                        </div>
+
+                        <div class="tip-box">
+                            <img src="img/tip-icon.png" class="tip-icon" alt="提示图标">
+                            <p><strong>红石小技巧：</strong> 在设计红石电路时，使用不同颜色的羊毛或混凝土来标记不同的信号线路，可以大大提高工作效率和电路的可读性。</p>
+                        </div>
+                    </div>
+                    <div class="card-image">
+                        <img src="img/redstone-demo.png" alt="红石门结构图">
+                        <p>红石门电路示例</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-card" data-aos="fade-left" data-aos-delay="150">
+                <h2>自动化装置</h2>
+                <div class="card-content">
+                    <div class="card-text">
+                        <p>《我的世界》的一大乐趣在于创建各种自动化系统，减少重复劳动并提高效率。自动化装置可以帮助你收集资源、烹饪食物、分类物品等。</p>
+
+                        <h3>自动农场:</h3>
+                        <p>自动农场利用水流、活塞或村民来自动化农作物的收获和再种植过程。以甘蔗农场为例:</p>
+                        <ol>
+                            <li>在水源旁种植甘蔗（甘蔗需要种在水边的沙子或泥土上）</li>
+                            <li>在甘蔗后方放置活塞，连接红石时钟电路</li>
+                            <li>当活塞推出时，会打破上方的甘蔗，只留下底部的一节</li>
+                            <li>使用漏斗矿车或水流系统收集掉落的甘蔗</li>
+                            <li>底部的甘蔗会自动生长，形成持续收获循环</li>
+                        </ol>
+
+                        <h3>自动熔炉系统:</h3>
+                        <p>自动熔炉系统可以自动处理大量需要冶炼的物品，如矿石、食物等:</p>
+                        <ol>
+                            <li>使用漏斗将待冶炼物品送入熔炉顶部</li>
+                            <li>使用另一个漏斗从侧面将燃料(如煤炭)送入熔炉</li>
+                            <li>使用第三个漏斗从底部收集冶炼完成的物品</li>
+                            <li>可以添加漏斗矿车和箱子来增加存储容量</li>
+                            <li>使用比较器检测输出箱子的填充程度，并通过红石灯显示</li>
+                        </ol>
+
+                        <div class="tip-box">
+                            <img src="img/tip-icon.png" class="tip-icon" alt="提示图标">
+                            <p><strong>自动化提示：</strong> 使用漏斗锁可以控制物品流动。当漏斗收到红石信号时，会停止传输物品，这对于创建控制系统非常有用。</p>
+                        </div>
+                    </div>
+                    <div class="card-image">
+                        <div class="image-group">
+                            <img src="img/auto-farm.png" alt="自动甘蔗农场">
+                            <img src="img/auto-furnace.png" alt="自动熔炉系统">
+                        </div>
+                        <p>滑动查看：左侧为自动甘蔗农场，右侧为自动熔炉系统</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content-card" data-aos="fade-right" data-aos-delay="200">
+                <h2>指令与命令方块</h2>
+                <div class="card-content">
+                    <div class="card-text">
+                        <p>命令是《我的世界》中强大的工具，可以执行游戏内部无法通过普通游戏机制实现的操作。命令方块则允许你在不需要玩家干预的情况下执行这些命令。</p>
+
+                        <h3>基础命令:</h3>
+                        <ul>
+                            <li><strong>/give</strong>：给予玩家特定物品，如<br>
+                                <span class="command"><span class="command-blue">/give</span> <span
+                                        class="command-green">@p</span> <span
+                                        class="command-yellow">minecraft:diamond_sword</span> <span
+                                        class="command-red">1</span></span>
+                            </li>
+                            <li><strong>/tp</strong>：传送玩家到指定位置，如<br>
+                                <span class="command"><span class="command-blue">/tp</span> <span
+                                        class="command-green">@p</span> <span class="command-red">100 64
+                                        200</span></span>
+                            </li>
+                            <li><strong>/gamemode</strong>：更改游戏模式，如<br>
+                                <span class="command"><span class="command-blue">/gamemode</span> <span
+                                        class="command-yellow">creative</span> <span
+                                        class="command-green">@p</span></span>
+                            </li>
+                            <li><strong>/time</strong>：更改游戏时间，如<br>
+                                <span class="command"><span class="command-blue">/time</span> <span
+                                        class="command-yellow">set</span> <span class="command-red">day</span></span>
+                            </li>
+                            <li><strong>/weather</strong>：更改天气，如<br>
+                                <span class="command"><span class="command-blue">/weather</span> <span
+                                        class="command-red">clear</span></span>
+                            </li>
+                        </ul>
+
+                        <h3>命令方块:</h3>
+                        <p>命令方块是一种特殊方块，可以存储和执行命令。获取命令方块需要使用命令：</p>
+                        <div class="code-block">
+                            <code>/give @p minecraft:command_block</code>
+                            <button class="minecraft-btn small" onclick="
+                                copyToClipboard('/give @p minecraft:command_block'); 
+                                this.innerText='已复制!'; 
+                                this.classList.add('copied');
+                                setTimeout(() => {
+                                    this.innerText='复制';
+                                    this.classList.remove('copied');
+                                }, 1500);">复制</button>
+                        </div>
+
+                        <p>命令方块有三种模式:</p>
+                        <ul>
+                            <li><strong>脉冲</strong>：接收到红石信号时执行一次命令</li>
+                            <li><strong>重复</strong>：在接收到红石信号的过程中持续执行命令</li>
+                            <li><strong>链锁</strong>：当前一个命令方块激活时执行命令，用于创建命令序列</li>
+                        </ul>
+
+                        <div class="tip-box">
+                            <img src="img/tip-icon.png" class="tip-icon" alt="提示图标">
+                            <p><strong>命令提示：</strong> 使用<span
+                                    class="command">/fill</span>命令可以快速创建或替换大片区域的方块，这对建造者来说是一个强大的工具。例如：<br>
+                                <span class="command"><span class="command-blue">/fill</span> <span
+                                        class="command-red">~ ~ ~ ~10 ~5 ~10</span> <span
+                                        class="command-yellow">minecraft:stone</span></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card-image">
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;">
+                            <h3 style="margin-bottom: 15px; color: #2e7d32;">交互式命令方块演示</h3>
+                            <p style="margin-bottom: 20px; text-align: center;">将鼠标悬停在方块上可查看3D效果，点击方块可查看命令示例</p>
+                            
+                            <div class="minecraft-block" id="large-command-block">
+                                <div class="minecraft-block-face minecraft-block-front"></div>
+                                <div class="minecraft-block-face minecraft-block-back"></div>
+                                <div class="minecraft-block-face minecraft-block-left"></div>
+                                <div class="minecraft-block-face minecraft-block-right"></div>
+                                <div class="minecraft-block-face minecraft-block-top"></div>
+                                <div class="minecraft-block-face minecraft-block-bottom"></div>
+                            </div>
+                            
+                            <div id="command-info" style="display: none; background-color: rgba(0,0,0,0.8); color: white; padding: 15px; border-radius: 8px; margin-top: 15px; max-width: 100%; font-family: 'Courier New', monospace; text-align: left;">
+                                <h4 style="color: #8dc63f; margin-bottom: 10px;">命令示例:</h4>
+                                <pre style="background: #222; padding: 10px; border-radius: 4px; overflow-x: auto; color: #ddd;">
+# 创建悬浮文字
+/summon armor_stand ~ ~1 ~ {CustomName:"\"欢迎来到MC百科\"",CustomNameVisible:1,Invisible:1,NoGravity:1}
+
+# 生成一个村民商人
+/summon villager ~ ~ ~ {VillagerData:{profession:librarian,level:2,type:plains}}
+
+# 创建一条循环命令
+/fill ~ ~ ~ ~5 ~ ~5 minecraft:redstone_block replace minecraft:stone
+                                </pre>
+                                <button id="close-command-info" class="minecraft-btn">关闭</button>
+                            </div>
+                            
+                            <p style="margin-top: 15px; text-align: center; font-style: italic;">命令方块是游戏中最强大的工具之一，可以实现各种复杂功能</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 添加新的交互式示例部分 -->
+            <section class="content-card" data-aos="fade-up" data-aos-delay="250">
+                <h2>命令方块系统案例</h2>
+                <div class="card-content">
+                    <div class="card-text">
+                        <p>命令方块可以组合在一起构建强大的系统，下面是一些常见的命令方块系统示例：</p>
+                        
+                        <h3>基础系统:</h3>
+                        <ul>
+                            <li><strong>传送系统</strong>：使用触发器和命令方块创建传送点</li>
+                            <li><strong>自动生成结构</strong>：使用链锁命令方块依次执行多个命令创建复杂结构</li>
+                            <li><strong>游戏规则修改</strong>：在游戏开始时自动设置游戏规则</li>
+                        </ul>
+                        
+                        <h3>高级系统:</h3>
+                        <ul>
+                            <li><strong>自定义生存玩法</strong>：通过命令方块创建特殊的游戏机制</li>
+                            <li><strong>小游戏系统</strong>：利用记分板和命令方块创建完整的小游戏</li>
+                            <li><strong>故事模式</strong>：使用命令方块触发对话、事件和任务</li>
+                        </ul>
+                        
+                        <div class="tip-box">
+                            <img src="img/tip-icon.png" class="tip-icon" alt="提示图标">
+                            <p><strong>进阶提示：</strong> 学习使用命令方块时，建议先在创造模式下进行实验，并保持有备份。命令方块的强大功能意味着错误的命令可能会对你的世界造成意外影响。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 MC百科. 保留所有权利。作者：杨汶川</p>
+            <p>本网站仅用于学习和分享，与Mojang和Microsoft没有官方关联。</p>
+            <p>联系方式：13325766744 | 邮箱：641339238@qq.com</p>
+        </div>
+    </footer>
+
+    <div class="custom-back-to-top" id="backToTop">
+        <a href="#"><img src="img/像素上箭头.png" alt="返回顶部"></a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // 初始化AOS动画
+            AOS.init({
+            once: true,
+            duration: 800,
+            offset: 100
+        });
+
+        // 创建悬浮粒子效果
+        function createParticles() {
+            const container = document.getElementById('particlesContainer');
+            const particleCount = Math.min(20, Math.floor(window.innerWidth / 100)); // 增加粒子数量
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // 随机位置
+                particle.style.left = Math.random() * 90 + 5 + '%';
+                particle.style.top = Math.random() * 90 + 5 + '%';
+                
+                // 随机动画参数
+                particle.style.setProperty('--float-duration', (Math.random() * 15 + 15) + 's');
+                particle.style.setProperty('--float-x', (Math.random() * 60 - 30) + 'px');
+                particle.style.setProperty('--float-y', (Math.random() * 60 - 30) + 'px');
+                particle.style.setProperty('--rotate', (Math.random() * 40 - 20) + 'deg');
+                particle.style.setProperty('--hue-rotate', (Math.random() * 120) + 'deg');
+                
+                container.appendChild(particle);
+            }
+        }
+
+        // 实现技能进度条动画
+        function initSkillBars() {
+            const skillBars = document.querySelectorAll('.skill-progress-bar');
+            
+            // 创建交叉观察器
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const bar = entry.target;
+                        const value = bar.getAttribute('data-value');
+                        bar.style.width = value + '%';
+                        observer.unobserve(bar);
+                    }
+                });
+            }, { threshold: 0.2 });
+            
+            // 观察所有技能条
+            skillBars.forEach(bar => observer.observe(bar));
+        }
+
+        // 3D方块旋转效果
+        function init3DBlocks() {
+            const blocks = document.querySelectorAll('.minecraft-block');
+            
+            blocks.forEach(block => {
+                block.addEventListener('mousemove', (e) => {
+                    const rect = block.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    
+                    // 计算鼠标位置相对于方块中心的偏移
+                    const mouseX = e.clientX - centerX;
+                    const mouseY = e.clientY - centerY;
+                    
+                    // 根据鼠标位置调整旋转角度
+                    const rotateX = -mouseY * 0.5;
+                    const rotateY = mouseX * 0.5;
+                    
+                    block.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.2)`;
+                });
+                
+                block.addEventListener('mouseleave', () => {
+                    block.style.transform = 'rotateX(15deg) rotateY(15deg)';
+                });
+            });
+        }
+
+        // 添加内容卡片的视差效果
+        function initParallaxCards() {
+            const cards = document.querySelectorAll('.content-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    // 计算鼠标位置在卡片内的相对位置（0-1）
+                    const xPercent = x / rect.width;
+                    const yPercent = y / rect.height;
+                    
+                    // 根据鼠标位置添加微小旋转
+                    const rotateX = (yPercent - 0.5) * 4;
+                    const rotateY = (0.5 - xPercent) * 4;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
+                    
+                    // 阴影效果随鼠标移动
+                    const shadowX = (xPercent - 0.5) * 20;
+                    const shadowY = (yPercent - 0.5) * 20;
+                    card.style.boxShadow = `${shadowX}px ${shadowY}px 30px rgba(0, 0, 0, 0.1), 0 0 20px rgba(141, 198, 63, 0.2)`;
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = '';
+                    card.style.boxShadow = '';
+                });
+            });
+        }
+
+        // 执行所有初始化函数
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            initSkillBars();
+            init3DBlocks();
+            initParallaxCards();
+            
+            // 添加命令方块点击交互
+            const largeCommandBlock = document.getElementById('large-command-block');
+            const commandInfo = document.getElementById('command-info');
+            const closeCommandInfo = document.getElementById('close-command-info');
+            
+            if (largeCommandBlock && commandInfo && closeCommandInfo) {
+                largeCommandBlock.addEventListener('click', function() {
+                    commandInfo.style.display = 'block';
+                    // 添加动画效果
+                    commandInfo.style.animation = 'fadeIn 0.3s ease-in-out';
+                });
+                
+                closeCommandInfo.addEventListener('click', function() {
+                    commandInfo.style.animation = 'fadeOut 0.3s ease-in-out';
+                    setTimeout(function() {
+                        commandInfo.style.display = 'none';
+                    }, 300);
+                });
+                
+                // 为大型命令方块添加特殊旋转效果
+                largeCommandBlock.addEventListener('mousemove', (e) => {
+                    const rect = largeCommandBlock.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    
+                    const mouseX = e.clientX - centerX;
+                    const mouseY = e.clientY - centerY;
+                    
+                    const rotateX = -mouseY * 0.3;
+                    const rotateY = mouseX * 0.3;
+                    
+                    largeCommandBlock.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.1)`;
+                });
+                
+                largeCommandBlock.addEventListener('mouseleave', () => {
+                    largeCommandBlock.style.transform = 'rotateX(15deg) rotateY(15deg)';
+                });
+            }
+            
+            // 滚动到顶部按钮
+            const backToTop = document.getElementById('backToTop');
+            if (backToTop) {
+                window.addEventListener('scroll', function() {
+                if (window.scrollY > 300) {
+                        backToTop.classList.add('visible');
+                } else {
+                        backToTop.classList.remove('visible');
+                    }
+                });
+            }
+            
+            // 为轮播图添加动画效果
+            const carousels = document.querySelectorAll('.carousel');
+            carousels.forEach(carousel => {
+                const items = carousel.querySelectorAll('.carousel-item');
+                const buttons = carousel.querySelectorAll('.carousel-button');
+                
+                buttons.forEach((button, index) => {
+                    button.addEventListener('click', () => {
+                        // 滚动到对应的轮播项
+                        items[index].scrollIntoView({ behavior: 'smooth' });
+                        
+                        // 更新按钮状态
+                        buttons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                    });
+                });
+            });
+        });
+
+        // 复制文本到剪贴板
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function () {
+                // 复制成功，显示提示
+                alert('已复制到剪贴板: ' + text);
+            }, function (err) {
+                console.error('无法复制文本: ', err);
+            });
+        }
+
+        // 滚动到主内容区域
+        function scrollToMainContent() {
+            const mainContent = document.querySelector('.content-section');
+            if (mainContent) {
+                mainContent.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>

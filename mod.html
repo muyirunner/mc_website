@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模组介绍 - MC百科</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 引入像素风格字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- 引入AOS动画库 -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <style>
+        /* 在鼠标跟随效果启用时隐藏原始光标 */
+        body.custom-cursor {
+            cursor: none !important;
+        }
+
+        /* 即使在自定义光标模式下，确保所有可点击元素也没有默认光标 */
+        body.custom-cursor a,
+        body.custom-cursor button,
+        body.custom-cursor .mod-button,
+        body.custom-cursor .mod-feature,
+        body.custom-cursor .ranking-tab,
+        body.custom-cursor .ranking-item,
+        body.custom-cursor input,
+        body.custom-cursor textarea,
+        body.custom-cursor label,
+        body.custom-cursor select,
+        body.custom-cursor .menu-toggle {
+            cursor: none !important;
+        }
+
+        /* 确保所有文本元素也没有默认光标 */
+        body.custom-cursor p,
+        body.custom-cursor h1,
+        body.custom-cursor h2,
+        body.custom-cursor h3,
+        body.custom-cursor h4,
+        body.custom-cursor h5,
+        body.custom-cursor h6,
+        body.custom-cursor span {
+            cursor: none !important;
+        }
+
+        /* 确保所有可滚动区域也隐藏默认光标 */
+        body.custom-cursor ::-webkit-scrollbar,
+        body.custom-cursor ::-webkit-scrollbar-track,
+        body.custom-cursor ::-webkit-scrollbar-thumb {
+            cursor: none !important;
+        }
+
+        /* 全局确保没有默认光标 */
+        body.custom-cursor * {
+            cursor: none !important;
+        }
+
+        /* 页面特定样式 */
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #2e7d32;
+            font-size: 2rem;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+            position: relative;
+            animation: text-flicker 5s infinite;
+        }
+
+        @keyframes text-flicker {
+
+            0%,
+            100% {
+                text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+            }
+
+            5% {
+                text-shadow: 2px 2px 0 rgba(141, 198, 63, 0.3);
+            }
+
+            10% {
+                text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+            }
+
+            15% {
+                text-shadow: 2px 2px 0 rgba(141, 198, 63, 0.3);
+            }
+
+            16% {
+                text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        .page-title::after {
+            content: '';
+            display: block;
+            width: 120px;
+            height: 4px;
+            background-color: #8dc63f;
+            margin: 0.5rem auto;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            animation: line-pulse 3s infinite;
+        }
+
+        @keyframes line-pulse {
+
+            0%,
+            100% {
+                width: 120px;
+            }
+
+            50% {
+                width: 180px;
+            }
+        }
+
+        .page-intro {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 1.2rem;
+            color: #555;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .mod-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+            perspective: 1000px;
+        }
+
+        .mod-card {
+            background-color: white;
+            border: 4px solid #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .mod-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background-color: #8dc63f;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .mod-card:hover {
+            transform: translateY(-10px) scale(1.03) rotateY(5deg);
+            box-shadow: 0 15px 30px rgba(141, 198, 63, 0.2), 0 0 20px rgba(141, 198, 63, 0.1);
+            border-color: #8dc63f;
+        }
+
+        .mod-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .mod-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(125deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .mod-card:hover::after {
+            opacity: 1;
+        }
+
+        .mod-icon-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .mod-card:hover .mod-icon-container {
+            animation: float 3s ease infinite;
+        }
+
+        .mod-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+            image-rendering: pixelated;
+            border: 3px solid #8dc63f;
+            border-radius: 8px;
+            padding: 0.5rem;
+            background-color: rgba(141, 198, 63, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .mod-card:hover .mod-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 16px rgba(141, 198, 63, 0.3);
+            background-color: rgba(141, 198, 63, 0.2);
+            animation: pulse 2s ease infinite;
+        }
+
+        .mod-icon-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            z-index: 1;
+            transition: all 0.4s ease;
+        }
+
+        .mod-card:hover .mod-icon-bg {
+            transform: translate(-5px, 5px);
+            animation: shadow-pulse 2s ease infinite alternate;
+        }
+
+        @keyframes shadow-pulse {
+            0% {
+                transform: translate(-5px, 5px);
+            }
+
+            100% {
+                transform: translate(-8px, 8px);
+            }
+        }
+
+        .mod-card h2 {
+            color: #2e7d32;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            border-bottom: 2px dashed #8dc63f;
+            padding-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .mod-card:hover h2 {
+            color: #74a534;
+            border-bottom: 2px solid #8dc63f;
+            text-shadow: 0 0 5px rgba(141, 198, 63, 0.3);
+        }
+
+        .category-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            vertical-align: middle;
+            image-rendering: pixelated;
+            transition: all 0.3s ease;
+        }
+
+        .mod-card:hover .category-icon {
+            animation: rotation 5s linear infinite;
+        }
+
+        .mod-card p {
+            color: #555;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .mod-card:hover p {
+            color: #333;
+        }
+
+        .mod-features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .mod-card:hover .mod-features {
+            transform: scale(1.05);
+        }
+
+        .mod-feature {
+            background-color: rgba(141, 198, 63, 0.15);
+            border-radius: 4px;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.9rem;
+            color: #2e7d32;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .mod-feature img {
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+            image-rendering: pixelated;
+            transition: all 0.3s ease;
+        }
+
+        .mod-feature:hover {
+            background-color: rgba(141, 198, 63, 0.3);
+            transform: translateY(-2px) scale(1.1);
+            border: 1px solid rgba(141, 198, 63, 0.5);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .mod-feature:hover img {
+            transform: scale(1.2);
+        }
+
+        .mod-button {
+            display: inline-block;
+            background-color: #8dc63f;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 2px solid #5a8017;
+            text-shadow: 1px 1px 0 #333;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            animation: button-pulse 3s infinite alternate;
+        }
+
+        @keyframes button-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 rgba(141, 198, 63, 0);
+            }
+
+            50% {
+                box-shadow: 0 0 15px rgba(141, 198, 63, 0.5);
+            }
+        }
+
+        .mod-button::after {
+            content: "";
+            background: rgba(255, 255, 255, 0.3);
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: -100%;
+            top: 0;
+            transform: skewX(-30deg);
+            transition: all 0.4s ease;
+        }
+
+        .mod-button::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            border-radius: 2px;
+            border: 1px dashed rgba(255, 255, 255, 0.4);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .mod-button:hover {
+            background-color: #74a534;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .mod-button:hover::before {
+            opacity: 1;
+        }
+
+        .mod-button:hover::after {
+            left: 100%;
+        }
+
+        .mod-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 添加像素效果 */
+        .pixelated-animation {
+            image-rendering: pixelated;
+            transition: all 0.3s ease;
+        }
+
+        /* 页面标题装饰增强 */
+        .page-header-decoration {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .page-header-decoration:hover {
+            transform: scale(1.1);
+        }
+
+        .page-header-line {
+            height: 3px;
+            background-color: #8dc63f;
+            width: 80px;
+            margin: 0 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+            animation: line-shine 3s infinite;
+        }
+
+        @keyframes line-shine {
+            0% {
+                left: -100%;
+            }
+
+            50%,
+            100% {
+                left: 100%;
+            }
+        }
+
+        .page-header-pixel {
+            width: 24px;
+            height: 24px;
+            image-rendering: pixelated;
+            transition: all 0.3s ease;
+            animation: float 3s ease infinite;
+        }
+
+        /* 返回顶部按钮增强 */
+        .custom-back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            transform: translateY(20px);
+        }
+
+        .custom-back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .custom-back-to-top img {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(141, 198, 63, 0.8);
+            padding: 8px;
+            border-radius: 50%;
+            border: 2px solid #5a8017;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            image-rendering: pixelated;
+        }
+
+        .custom-back-to-top:hover img {
+            background-color: #8dc63f;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 添加像素风格鼠标特效 */
+        .pixel-cursor {
+            pointer-events: none;
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: url('img/像素光标.png') no-repeat center center;
+            background-size: contain;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            display: none;
+            image-rendering: pixelated;
+            transition: background-image 0.1s ease, transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
+        }
+
+        /* 悬停在可点击元素上的鼠标样式 */
+        .pixel-cursor.clickable {
+            background-image: url('img/像素手型光标.png');
+            width: 24px;
+            height: 24px;
+        }
+
+        /* 悬停在文本上的鼠标样式 */
+        .pixel-cursor.text {
+            background-image: url('img/像素文本光标.png');
+            width: 18px;
+            height: 22px;
+        }
+
+        /* 动画关键帧 */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1) rotate(5deg);
+            }
+
+            50% {
+                transform: scale(1.05) rotate(5deg);
+            }
+        }
+
+        @keyframes rotation {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 为主标题添加像素风格边框 */
+        .pixel-border {
+            position: relative;
+            padding: 10px;
+        }
+
+        .pixel-border::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 4px solid;
+            border-image: url('img/像素边框.png') 4 repeat;
+            border-image-slice: 4;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        /* 为页面顶部添加像素风格装饰 */
+        .pixel-decoration {
+            position: absolute;
+            width: 100%;
+            height: 8px;
+            top: 0;
+            left: 0;
+            background: url('img/像素装饰.png') repeat-x;
+            image-rendering: pixelated;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .mod-categories {
+                grid-template-columns: 1fr;
+            }
+
+            .mod-card {
+                margin-bottom: 1rem;
+            }
+
+            .pixel-cursor {
+                display: none !important;
+            }
+        }
+
+        /* 排行榜样式 */
+        .interactive-section {
+            margin-top: 4rem;
+        }
+
+        .section-title {
+            color: #2e7d32;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px dashed #8dc63f;
+            display: inline-block;
+        }
+
+        .mod-ranking {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid #ddd;
+        }
+
+        .ranking-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+
+        .ranking-tab {
+            padding: 0.8rem 1.2rem;
+            margin-right: 0.5rem;
+            background-color: transparent;
+            border: none;
+            border-radius: 4px 4px 0 0;
+            color: #555;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .ranking-tab:hover {
+            color: #2e7d32;
+            background-color: rgba(141, 198, 63, 0.1);
+        }
+
+        .ranking-tab.active {
+            color: #2e7d32;
+            background-color: rgba(141, 198, 63, 0.2);
+        }
+
+        .ranking-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #8dc63f;
+            border-radius: 3px;
+        }
+
+        .ranking-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+            background-color: white;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .ranking-item:hover {
+            background-color: rgba(141, 198, 63, 0.1);
+            transform: translateX(10px);
+        }
+
+        .ranking-item:last-child {
+            border-bottom: none;
+        }
+
+        .ranking-number {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #2e7d32;
+            margin-right: 1rem;
+            background-color: rgba(141, 198, 63, 0.2);
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid #8dc63f;
+        }
+
+        .ranking-name {
+            flex-grow: 1;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .ranking-downloads,
+        .ranking-date,
+        .ranking-rating {
+            background-color: rgba(141, 198, 63, 0.15);
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #2e7d32;
+            white-space: nowrap;
+        }
+
+        /* 排行榜中的模组类型样式 */
+        .ranking-item.tech .ranking-name::before {
+            content: '🔧 ';
+            color: #ff9800;
+        }
+
+        .ranking-item.magic .ranking-name::before {
+            content: '✨ ';
+            color: #9c27b0;
+        }
+
+        .ranking-item.util .ranking-name::before {
+            content: '🛠️ ';
+            color: #2196f3;
+        }
+
+        /* 排行榜响应式调整 */
+        @media (max-width: 768px) {
+            .ranking-tabs {
+                flex-wrap: wrap;
+            }
+
+            .ranking-tab {
+                margin-bottom: 0.5rem;
+            }
+
+            .ranking-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .ranking-number {
+                margin-bottom: 0.5rem;
+            }
+
+            .ranking-name {
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pixel-decoration"></div>
+    <div class="pixel-cursor" id="pixelCursor"></div>
+    <header>
+        <div class="logo-container">
+            <img src="img/MC百科像素风Logo.png" alt="MC百科Logo" class="logo">
+            <h1>MC百科</h1>
+        </div>
+        <div class="menu-toggle" onclick="toggleMobileMenu()"></div>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="basic.html">新手入门</a></li>
+                <li><a href="advanced.html">进阶技巧</a></li>
+                <li><a href="mod.html" class="active">模组介绍</a></li>
+                <li><a href="video.html">视频推荐</a></li>
+                <li><a href="share.html">玩家心得</a></li>
+                <li><a href="search.html">资源搜索</a></li>
+                <li><a href="game.html">生物图鉴</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="content-section">
+            <div class="page-header-decoration" data-aos="fade-down">
+                <div class="page-header-line"></div>
+                <img src="img/像素开箱图标.png" alt="模组" class="page-header-pixel">
+                <div class="page-header-line"></div>
+            </div>
+
+            <h1 class="page-title pixel-border" data-aos="fade-up">Minecraft 模组天地</h1>
+            <p class="page-intro" data-aos="fade-up" data-aos-delay="100">
+                这里是模组介绍页面，选择你感兴趣的模组类型探索吧！发现令人惊叹的社区创作，让你的Minecraft世界更加丰富多彩！</p>
+
+            <div class="mod-categories">
+                <!-- 科技模组 -->
+                <div class="mod-card" data-aos="fade-up" data-aos-delay="150" data-card-type="tech">
+                    <div class="mod-icon-container">
+                        <img src="img/mod-tech.png" alt="科技模组图标" class="mod-icon">
+                        <div class="mod-icon-bg"></div>
+                    </div>
+                    <h2><img src="img/mod-tech.png" alt="科技" class="category-icon">科技模组</h2>
+                    <p>这类模组通常为游戏添加高级机械、电力系统和自动化设备。如 Industrial Craft、Thermal Expansion、Applied Energistics 2
+                        等，让你在方块世界中体验工业革命！</p>
+
+                    <div class="mod-features">
+                        <span class="mod-feature" data-tooltip="通过自动化系统提高生产效率"><img src="img/feature-circuit.png"
+                                alt="自动化">自动化</span>
+                        <span class="mod-feature" data-tooltip="建造工业生产线和大型工厂"><img src="img/feature-factory.png"
+                                alt="工业">工业</span>
+                        <span class="mod-feature" data-tooltip="管理和分配各种能源类型"><img src="img/feature-energy.png"
+                                alt="能源">能源系统</span>
+                    </div>
+
+                    <a href="mod-detail.html?type=tech" class="mod-button">查看详情</a>
+                </div>
+
+                <!-- 魔法模组 -->
+                <div class="mod-card" data-aos="fade-up" data-aos-delay="250" data-card-type="magic">
+                    <div class="mod-icon-container">
+                        <img src="img/mod-magic.png" alt="魔法模组图标" class="mod-icon">
+                        <div class="mod-icon-bg"></div>
+                    </div>
+                    <h2><img src="img/mod-magic.png" alt="魔法" class="category-icon">魔法模组</h2>
+                    <p>为游戏增添神秘与奇幻元素的模组，如 Botania、Thaumcraft、Blood Magic 等。这些模组让你掌握元素力量，施展奇妙法术，开启全新冒险！</p>
+
+                    <div class="mod-features">
+                        <span class="mod-feature" data-tooltip="施放各种强大法术的能力"><img src="img/feature-spell.png"
+                                alt="法术">法术</span>
+                        <span class="mod-feature" data-tooltip="进行神秘仪式获取力量"><img src="img/feature-ritual.png"
+                                alt="仪式">仪式</span>
+                        <span class="mod-feature" data-tooltip="研究古老知识和魔法典籍"><img src="img/feature-book.png"
+                                alt="研究">研究</span>
+                    </div>
+
+                    <a href="mod-detail.html?type=magic" class="mod-button">查看详情</a>
+                </div>
+
+                <!-- 实用模组 -->
+                <div class="mod-card" data-aos="fade-up" data-aos-delay="350" data-card-type="util">
+                    <div class="mod-icon-container">
+                        <img src="img/mod-tool.png" alt="实用模组图标" class="mod-icon">
+                        <div class="mod-icon-bg"></div>
+                    </div>
+                    <h2><img src="img/mod-tool.png" alt="工具" class="category-icon">实用模组</h2>
+                    <p>改善游戏体验的辅助类模组，如 JEI（物品合成查询）、JourneyMap（旅行地图）、Optifine（优化与美化）等，这些模组让你的游戏更加便捷高效！</p>
+
+                    <div class="mod-features">
+                        <span class="mod-feature" data-tooltip="优化游戏界面和交互体验"><img src="img/feature-ui.png"
+                                alt="UI">界面增强</span>
+                        <span class="mod-feature" data-tooltip="提供详细的地图和导航功能"><img src="img/feature-map.png"
+                                alt="地图">地图</span>
+                        <span class="mod-feature" data-tooltip="提高游戏性能和运行速度"><img src="img/feature-performance.png"
+                                alt="优化">优化</span>
+                    </div>
+
+                    <a href="mod-detail.html?type=tool" class="mod-button">查看详情</a>
+                </div>
+            </div>
+
+            <!-- 增加互动功能区 -->
+            <div class="interactive-section" data-aos="fade-up" data-aos-delay="400">
+                <h2 class="section-title">模组排行榜</h2>
+                <div class="mod-ranking">
+                    <div class="ranking-tabs">
+                        <button class="ranking-tab active" data-type="popular">热门</button>
+                        <button class="ranking-tab" data-type="new">最新</button>
+                        <button class="ranking-tab" data-type="rated">评分最高</button>
+                    </div>
+                    <div class="ranking-content">
+                        <!-- 排行榜内容会通过JavaScript动态加载 -->
+                        <div id="rankingResults"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 MC百科. 保留所有权利。作者：杨汶川</p>
+            <p>本网站仅用于学习和分享，与Mojang和Microsoft没有官方关联。</p>
+            <p>联系方式：13325766744 | 邮箱：641339238@qq.com</p>
+        </div>
+    </footer>
+
+    <div class="custom-back-to-top" id="backToTop">
+        <a href="#"><img src="img/像素上箭头.png" alt="返回顶部"></a>
+    </div>
+
+    <!-- 添加工具提示容器 -->
+    <div id="tooltip" class="tooltip" style="display: none;"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // 初始化AOS动画库
+        document.addEventListener('DOMContentLoaded', function () {
+            // 初始化AOS
+            AOS.init({
+                once: true, // 动画只触发一次
+                offset: 100, // 触发动画的偏移量
+                duration: 800, // 默认动画持续时间
+                easing: 'ease-out-cubic', // 动画效果
+                delay: 100 // 默认延迟时间
+            });
+
+            // 返回顶部按钮脚本
+            const backToTopButton = document.getElementById('backToTop');
+
+            // 监听滚动事件
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+            });
+
+            // 点击返回顶部
+            backToTopButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // 移动菜单切换
+            if (typeof toggleMobileMenu !== 'function') {
+                window.toggleMobileMenu = function () {
+                    const nav = document.querySelector('nav ul');
+                    nav.classList.toggle('mobile-active');
+                };
+            }
+
+            // 为模组卡片添加悬停音效
+            const modCards = document.querySelectorAll('.mod-card');
+            modCards.forEach(card => {
+                card.addEventListener('mouseenter', function () {
+                    const hoverSound = new Audio('sounds/hover.mp3');
+                    hoverSound.volume = 0.2;
+                    hoverSound.play().catch(e => {
+                        // 忽略自动播放限制错误
+                        console.log('Sound autoplay prevented');
+                    });
+                });
+            });
+
+            // 像素风格鼠标跟随效果
+            const pixelCursor = document.getElementById('pixelCursor');
+            if (pixelCursor && window.innerWidth > 768) {
+                pixelCursor.style.display = 'block';
+
+                // 添加自定义光标类到body
+                document.body.classList.add('custom-cursor');
+
+                document.addEventListener('mousemove', (e) => {
+                    pixelCursor.style.left = e.clientX + 'px';
+                    pixelCursor.style.top = e.clientY + 'px';
+                });
+
+                // 在可点击元素上时变换鼠标样式
+                const clickableElements = document.querySelectorAll('a, button, .mod-button, .mod-feature, .ranking-tab, .ranking-item');
+                clickableElements.forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        pixelCursor.style.transform = 'translate(-50%, -50%) scale(1.2)';
+                        pixelCursor.style.filter = 'brightness(1.2)';
+                        pixelCursor.classList.add('clickable');
+                        pixelCursor.classList.remove('text');
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        pixelCursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                        pixelCursor.style.filter = 'brightness(1)';
+                        pixelCursor.classList.remove('clickable');
+                    });
+                });
+
+                // 在文本元素上时变换鼠标样式
+                const textElements = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span:not(.mod-feature):not(.ranking-number):not(.ranking-name):not(.ranking-downloads):not(.ranking-date):not(.ranking-rating)');
+                textElements.forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        pixelCursor.classList.add('text');
+                        pixelCursor.classList.remove('clickable');
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        pixelCursor.classList.remove('text');
+                    });
+                });
+
+                // 添加鼠标点击效果
+                document.addEventListener('mousedown', () => {
+                    pixelCursor.style.transform = 'translate(-50%, -50%) scale(0.8)';
+                    pixelCursor.style.opacity = '0.8';
+                });
+
+                document.addEventListener('mouseup', () => {
+                    pixelCursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                    pixelCursor.style.opacity = '1';
+                });
+
+                // 确保在鼠标离开页面区域时移除自定义光标类
+                document.addEventListener('mouseleave', () => {
+                    document.body.classList.remove('custom-cursor');
+                });
+
+                // 确保在鼠标回到页面区域时添加自定义光标类
+                document.addEventListener('mouseenter', () => {
+                    document.body.classList.add('custom-cursor');
+                });
+            }
+
+            // 工具提示功能
+            const tooltip = document.getElementById('tooltip');
+            const features = document.querySelectorAll('.mod-feature[data-tooltip]');
+
+            features.forEach(feature => {
+                feature.addEventListener('mouseenter', (e) => {
+                    const tipText = feature.getAttribute('data-tooltip');
+                    tooltip.textContent = tipText;
+                    tooltip.style.display = 'block';
+
+                    // 定位工具提示
+                    const rect = feature.getBoundingClientRect();
+                    tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+                    tooltip.style.top = (rect.top - tooltip.offsetHeight - 10) + 'px';
+
+                    // 添加淡入效果
+                    setTimeout(() => {
+                        tooltip.style.opacity = '1';
+                    }, 10);
+                });
+
+                feature.addEventListener('mouseleave', () => {
+                    tooltip.style.opacity = '0';
+                    setTimeout(() => {
+                        tooltip.style.display = 'none';
+                    }, 300);
+                });
+            });
+
+            // 添加排行榜交互
+            const rankingTabs = document.querySelectorAll('.ranking-tab');
+            const rankingResults = document.getElementById('rankingResults');
+
+            // 模拟数据
+            const rankingData = {
+                popular: [
+                    { name: 'Industrial Craft 2', type: 'tech', downloads: '5,000,000+' },
+                    { name: 'Thaumcraft 6', type: 'magic', downloads: '4,200,000+' },
+                    { name: 'JEI', type: 'util', downloads: '8,500,000+' }
+                ],
+                new: [
+                    { name: 'Create Mod', type: 'tech', date: '2023-05-15' },
+                    { name: 'Botania R1.16', type: 'magic', date: '2023-04-02' },
+                    { name: 'Xaero\'s Map', type: 'util', date: '2023-06-01' }
+                ],
+                rated: [
+                    { name: 'Optifine HD', type: 'util', rating: '4.9/5' },
+                    { name: 'Applied Energistics 2', type: 'tech', rating: '4.8/5' },
+                    { name: 'Blood Magic', type: 'magic', rating: '4.7/5' }
+                ]
+            };
+
+            function renderRanking(type) {
+                const data = rankingData[type];
+                let html = '<ul class="ranking-list">';
+
+                data.forEach((item, index) => {
+                    let extraInfo = '';
+                    if (type === 'popular') extraInfo = `<span class="ranking-downloads">${item.downloads}</span>`;
+                    if (type === 'new') extraInfo = `<span class="ranking-date">更新: ${item.date}</span>`;
+                    if (type === 'rated') extraInfo = `<span class="ranking-rating">评分: ${item.rating}</span>`;
+
+                    html += `
+                        <li class="ranking-item ${item.type}" data-aos="fade-left" data-aos-delay="${index * 100}">
+                            <span class="ranking-number">#${index + 1}</span>
+                            <span class="ranking-name">${item.name}</span>
+                            ${extraInfo}
+                        </li>
+                    `;
+                });
+
+                html += '</ul>';
+                rankingResults.innerHTML = html;
+
+                // 重新初始化AOS动画
+                AOS.refresh();
+            }
+
+            // 初始显示热门排行
+            renderRanking('popular');
+
+            // 切换排行榜标签
+            rankingTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    rankingTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    const type = tab.getAttribute('data-type');
+                    renderRanking(type);
+
+                    // 播放切换音效
+                    const tabSound = new Audio('sounds/click.mp3');
+                    tabSound.volume = 0.3;
+                    tabSound.play().catch(e => {
+                        console.log('Sound autoplay prevented');
+                    });
+                });
+            });
+
+            // 3D卡片效果
+            modCards.forEach(card => {
+                card.addEventListener('mousemove', function (e) {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    const angleY = (x - centerX) / 20;
+                    const angleX = (centerY - y) / 20;
+
+                    card.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) translateZ(10px)`;
+                });
+
+                card.addEventListener('mouseleave', function () {
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+                    setTimeout(() => {
+                        card.style.transform = '';
+                    }, 1000);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

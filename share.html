@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>玩家心得 - MC百科</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 引入像素风格字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* 玩家心得页面特定样式 */
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #2e7d32;
+            font-size: 2rem;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .page-intro {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        /* 心得列表区域 */
+        .section-title {
+            color: #2e7d32;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px dashed #8dc63f;
+            display: inline-block;
+        }
+
+        .article-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .article-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.4s ease;
+            border: 3px solid #ddd;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .article-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .article-card:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .article-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            border-color: #8dc63f;
+        }
+
+        .article-thumbnail {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            image-rendering: pixelated;
+            border-bottom: 3px solid #ddd;
+            transition: all 0.4s ease;
+        }
+
+        .article-card:hover .article-thumbnail {
+            border-color: #8dc63f;
+            filter: brightness(1.1);
+        }
+
+        .article-content {
+            padding: 1.5rem;
+        }
+
+        .article-title {
+            font-size: 1.4rem;
+            color: #2e7d32;
+            margin-bottom: 1rem;
+        }
+
+        .article-summary {
+            color: #555;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .read-more-btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: #8dc63f;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            border: 2px solid #5a8017;
+            font-weight: bold;
+        }
+
+        .read-more-btn:hover {
+            background-color: #74a534;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 投稿区域 */
+        .submission-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background-color: rgba(141, 198, 63, 0.1);
+            border-radius: 10px;
+            border: 3px dashed #8dc63f;
+        }
+
+        .post-button {
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .post-button img {
+            width: 180px;
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
+            transition: all 0.3s ease;
+        }
+
+        .post-button:hover img {
+            transform: translateY(-5px) scale(1.05);
+            filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.2));
+        }
+
+        /* 投稿表单弹窗 */
+        .submission-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            border: 4px solid #8dc63f;
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            color: #f44336;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .popup-title {
+            text-align: center;
+            color: #2e7d32;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2e7d32;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #8dc63f;
+            box-shadow: 0 0 0 3px rgba(141, 198, 63, 0.2);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background-color: #8dc63f;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            width: 100%;
+            font-weight: bold;
+            border: 2px solid #5a8017;
+        }
+
+        .submit-btn:hover {
+            background-color: #74a534;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 返回顶部按钮 */
+        .custom-back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            transform: translateY(20px);
+        }
+
+        .custom-back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .custom-back-to-top img {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(141, 198, 63, 0.8);
+            padding: 8px;
+            border-radius: 50%;
+            border: 2px solid #5a8017;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .custom-back-to-top:hover img {
+            background-color: #8dc63f;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .article-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .popup-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="img/MC百科像素风Logo.png" alt="MC百科Logo" class="logo">
+            <h1>MC百科</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="basic.html">新手入门</a></li>
+                <li><a href="advanced.html">进阶技巧</a></li>
+                <li><a href="mod.html">模组介绍</a></li>
+                <li><a href="video.html">视频推荐</a></li>
+                <li><a href="share.html" class="active">玩家心得</a></li>
+                <li><a href="search.html">资源搜索</a></li>
+                <li><a href="game.html">生物图鉴</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="content-section">
+            <h1 class="page-title">Minecraft 玩家心得</h1>
+            <p class="page-intro">这里收集了玩家们的精彩游戏经验和实用技巧，快来分享你的Minecraft故事吧！</p>
+
+            <!-- 心得文章列表 -->
+            <section>
+                <h2 class="section-title">心得列表</h2>
+                <div class="article-grid">
+                    <!-- 文章1 -->
+                    <article class="article-card">
+                        <img src="img/share-building.png" alt="红石自动门城堡" class="article-thumbnail">
+                        <div class="article-content">
+                            <h3 class="article-title">我搭建了红石自动门城堡</h3>
+                            <p class="article-summary">使用红石门与压力板设计了一座实用又美观的基地，所有门都能自动开关，同时保持了中世纪城堡的美观风格...</p>
+                            <a href="share-detail.html?id=1" class="read-more-btn">阅读全文</a>
+                        </div>
+                    </article>
+
+                    <!-- 文章2 -->
+                    <article class="article-card">
+                        <img src="img/share-redstone.png" alt="红石机关进阶教程" class="article-thumbnail">
+                        <div class="article-content">
+                            <h3 class="article-title">红石机关进阶教程</h3>
+                            <p class="article-summary">从基础逻辑门到陷阱设计，全面讲解红石机关的进阶技巧。本文将帮助你掌握更复杂的电路设计方法...</p>
+                            <a href="share-detail.html?id=2" class="read-more-btn">阅读全文</a>
+                        </div>
+                    </article>
+
+                    <!-- 文章3 -->
+                    <article class="article-card">
+                        <img src="img/share-story.png" alt="末影龙的第一次击败经历" class="article-thumbnail">
+                        <div class="article-content">
+                            <h3 class="article-title">末影龙的第一次击败经历</h3>
+                            <p class="article-summary">没想到第一次击败末影龙竟然用了6个小时，期间死亡5次，但每次失败都让我学到了新的战术...</p>
+                            <a href="share-detail.html?id=3" class="read-more-btn">阅读全文</a>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- 投稿区域 -->
+            <section class="submission-section">
+                <h2 class="section-title">分享你的Minecraft故事</h2>
+                <p>有独特的建筑设计？发现了高效的生存技巧？还是有精彩的冒险故事？</p>
+                <p>点击下方按钮，分享你的Minecraft经验！</p>
+                <div class="post-button" id="postButton">
+                    <img src="img/post-btn.png" alt="我要投稿">
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 投稿表单弹窗 -->
+    <div class="submission-popup" id="submissionPopup">
+        <div class="popup-content">
+            <span class="popup-close" id="popupClose">&times;</span>
+            <h2 class="popup-title">分享你的Minecraft心得</h2>
+            <form id="submissionForm">
+                <div class="form-group">
+                    <label for="articleTitle" class="form-label">文章标题</label>
+                    <input type="text" id="articleTitle" class="form-control" placeholder="例如：我的红石自动农场设计" required>
+                </div>
+                <div class="form-group">
+                    <label for="authorName" class="form-label">作者名称</label>
+                    <input type="text" id="authorName" class="form-control" placeholder="你的游戏ID或昵称" required>
+                </div>
+                <div class="form-group">
+                    <label for="articleSummary" class="form-label">文章摘要</label>
+                    <input type="text" id="articleSummary" class="form-control" placeholder="简短描述你要分享的内容（50字以内）"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="articleContent" class="form-label">文章内容</label>
+                    <textarea id="articleContent" class="form-control" placeholder="详细描述你的Minecraft经验、技巧或故事..."
+                        required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">提交文章</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 MC百科. 保留所有权利。作者：杨汶川</p>
+            <p>本网站仅用于学习和分享，与Mojang和Microsoft没有官方关联。</p>
+            <p>联系方式：13325766744 | 邮箱：641339238@qq.com</p>
+        </div>
+    </footer>
+
+    <div class="custom-back-to-top" id="backToTop">
+        <a href="#"><img src="img/像素上箭头.png" alt="返回顶部"></a>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 返回顶部按钮
+            const backToTopButton = document.getElementById('backToTop');
+
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+            });
+
+            backToTopButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // 投稿弹窗
+            const postButton = document.getElementById('postButton');
+            const submissionPopup = document.getElementById('submissionPopup');
+            const popupClose = document.getElementById('popupClose');
+            const submissionForm = document.getElementById('submissionForm');
+
+            // 打开弹窗
+            postButton.addEventListener('click', function () {
+                submissionPopup.style.display = 'flex';
+                document.body.style.overflow = 'hidden'; // 防止背景滚动
+            });
+
+            // 关闭弹窗
+            popupClose.addEventListener('click', function () {
+                submissionPopup.style.display = 'none';
+                document.body.style.overflow = 'auto'; // 恢复背景滚动
+            });
+
+            // 点击弹窗外部关闭
+            submissionPopup.addEventListener('click', function (e) {
+                if (e.target === submissionPopup) {
+                    submissionPopup.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+
+            // 表单提交（模拟）
+            submissionForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // 获取表单数据
+                const title = document.getElementById('articleTitle').value;
+                const author = document.getElementById('authorName').value;
+
+                // 显示提交成功消息
+                alert(`感谢你的投稿，${author}！\n你的文章"${title}"已提交成功，我们会尽快审核。`);
+
+                // 关闭弹窗并重置表单
+                submissionPopup.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                submissionForm.reset();
+            });
+
+            // ESC键关闭弹窗
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && submissionPopup.style.display === 'flex') {
+                    submissionPopup.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

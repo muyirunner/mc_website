@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我搭建了红石自动门城堡 - MC百科</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 引入像素风格字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* 文章详情页面特定样式 */
+        .content-section {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* 文章头部 */
+        .article-header {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .article-title {
+            color: #2e7d32;
+            font-size: 2.2rem;
+            margin-bottom: 0.8rem;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .article-meta {
+            color: #777;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-banner {
+            width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 4px solid #8dc63f;
+            margin-bottom: 1rem;
+            image-rendering: pixelated;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 文章内容 */
+        .article-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+            border: 3px solid #ddd;
+        }
+
+        .article-content p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .article-content h2 {
+            color: #2e7d32;
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px dashed #8dc63f;
+        }
+
+        .article-content h3 {
+            color: #2e7d32;
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+
+        .article-content li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .article-image {
+            width: 100%;
+            border-radius: 8px;
+            margin: 1.5rem 0 2rem;
+            border: 3px solid #8dc63f;
+            image-rendering: pixelated;
+        }
+
+        .image-caption {
+            text-align: center;
+            color: #666;
+            margin-top: -1.5rem;
+            margin-bottom: 2rem;
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+
+        .image-container {
+            margin: 2rem 0;
+        }
+
+        /* 评论区样式 */
+        .comments-section {
+            background-color: rgba(141, 198, 63, 0.1);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border: 3px solid #ddd;
+        }
+
+        .section-title {
+            color: #2e7d32;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px dashed #8dc63f;
+            display: inline-block;
+        }
+
+        .comment-list {
+            margin-bottom: 2.5rem;
+        }
+
+        .comment {
+            display: flex;
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid #ddd;
+        }
+
+        .comment:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+            border-color: #8dc63f;
+        }
+
+        .comment-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            border: 2px solid #8dc63f;
+            image-rendering: pixelated;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-author {
+            color: #2e7d32;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .comment-text {
+            color: #444;
+            line-height: 1.6;
+        }
+
+        .comment-time {
+            color: #999;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        /* 评论表单 */
+        .comment-form {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid #ddd;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #8dc63f;
+            box-shadow: 0 0 5px rgba(141, 198, 63, 0.5);
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            padding: 0.8rem 1.5rem;
+            background-color: #8dc63f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #5a8017;
+            font-weight: bold;
+        }
+
+        .submit-btn:hover {
+            background-color: #74a534;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 返回顶部按钮 */
+        .custom-back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            transform: translateY(20px);
+        }
+
+        .custom-back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .custom-back-to-top img {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(141, 198, 63, 0.8);
+            padding: 8px;
+            border-radius: 50%;
+            border: 2px solid #5a8017;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .custom-back-to-top:hover img {
+            background-color: #8dc63f;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .article-content {
+                padding: 1.5rem;
+            }
+
+            .comment {
+                flex-direction: column;
+            }
+
+            .comment-avatar {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+
+            .article-title {
+                font-size: 1.8rem;
+            }
+
+            .article-banner {
+                border-width: 3px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="img/MC百科像素风Logo.png" alt="MC百科Logo" class="logo">
+            <h1>MC百科</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="basic.html">新手入门</a></li>
+                <li><a href="advanced.html">进阶技巧</a></li>
+                <li><a href="mod.html">模组介绍</a></li>
+                <li><a href="video.html">视频推荐</a></li>
+                <li><a href="share.html" class="active">玩家心得</a></li>
+                <li><a href="search.html">资源搜索</a></li>
+                <li><a href="game.html">生物图鉴</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="content-section">
+            <!-- 文章头部 -->
+            <header class="article-header">
+                <h1 class="article-title">我搭建了红石自动门城堡</h1>
+                <p class="article-meta">作者：方块君 | 日期：2025年4月</p>
+                <img src="img/share-detail-banner.png" alt="红石自动门城堡全景" class="article-banner">
+            </header>
+
+            <!-- 文章内容 -->
+            <article class="article-content">
+                <p>大家好，我是方块君。今天想跟大家分享我最近花了两周时间完成的红石自动门城堡。这座城堡不仅外观精美，还融合了多种红石机关，实现了所有门的自动化开关。</p>
+
+                <p>红石是Minecraft中最有趣的元素之一，它让我们能够在游戏中模拟真实世界的电路系统。对于这个城堡项目，我的目标是在保持中世纪城堡美观的同时，实现全自动化的门系统，既方便玩家进出，又能有效防御敌对生物。
+                </p>
+
+                <h2>一、设计规划</h2>
+
+                <p>在开始建造前，我花了三天时间设计整个城堡的布局和红石系统。城堡采用四角塔设计，中央为主堡，周围环绕着石墙。每个入口都需要设计不同的自动门系统：</p>
+
+                <ul>
+                    <li>主城门：双向活塞门，带延时自动关闭功能</li>
+                    <li>塔楼入口：压力板触发的单向门</li>
+                    <li>密室入口：隐藏式书架门，由拉杆触发</li>
+                    <li>城墙哨位：活板门跳台，便于快速进出检查</li>
+                </ul>
+
+                <div class="image-container">
+                    <img src="img/share-detail-step1.png" alt="红石门机关设计图" class="article-image">
+                    <p class="image-caption">主城门红石电路设计图，包含压力板输入和活塞门输出部分</p>
+                </div>
+
+                <h2>二、主城门的制作</h2>
+
+                <p>主城门是整个城堡最复杂的红石机关，它需要满足以下要求：</p>
+
+                <ol>
+                    <li>能够从城内和城外双向触发开门</li>
+                    <li>门开启后，延时5秒自动关闭</li>
+                    <li>当有实体（玩家或生物）站在门口时，门保持开启状态</li>
+                    <li>保持城堡的美观，隐藏所有红石线路</li>
+                </ol>
+
+                <p>为了实现这些功能，我使用了压力板作为输入装置，连接到一个脉冲延长器和自锁电路。当玩家踩上压力板时，红石信号会通过延长器保持5秒，然后自动关闭门。如果玩家仍站在门内压力板上，自锁电路会保持门开启状态。
+                </p>
+
+                <p>最大的挑战是隐藏所有红石线路。为此，我在城墙内部预留了足够的空间，并使用了红石中继器来延长信号，确保即使在大型结构中也能正常工作。</p>
+
+                <div class="image-container">
+                    <img src="img/share-detail-step2.png" alt="完成的主城门实景" class="article-image">
+                    <p class="image-caption">完成的主城门实景图，可以看到入口处的压力板触发装置</p>
+                </div>
+
+                <h2>三、密室隐藏门的制作</h2>
+
+                <p>密室隐藏门是一个非常有趣的装置，它看起来就像普通的书架墙，但实际上可以通过拉杆开启进入秘密房间。这个机关的关键在于使用粘性活塞将整个书架墙推动，为玩家打开通道。</p>
+
+                <p>设计这个装置时，我使用了两种不同的电路：</p>
+
+                <ol>
+                    <li><strong>触发电路</strong>：拉杆被刻意隐藏在附近的墙饰中，与常规拉杆不同，这里使用了双T触发器，实现了切换开关的功能。</li>
+                    <li><strong>动力电路</strong>：连接到一组粘性活塞，推动整面书架墙。为了让书架能够顺利移动，我使用了粘液块连接所有的书架方块。</li>
+                </ol>
+
+                <p>最大的挑战在于时机控制，确保所有活塞同步移动，避免书架墙卡住或显示奇怪的断裂效果。</p>
+
+                <h2>四、城墙哨位跳台</h2>
+
+                <p>城墙哨位的跳台设计简单但实用，允许守卫迅速从城墙顶部到达地面。这个系统使用活板门，通过踩踏按钮瞬间打开，让玩家跳下，然后迅速关闭防止敌对生物进入。</p>
+
+                <p>为了防止意外摔伤，我在下方设计了水池缓冲，这样即使从高处跳下也不会受伤。同时，通过红石电路控制，确保活板门开启的时间刚好够玩家跳过，但不会让怪物有机会通过。</p>
+
+                <h2>总结与心得</h2>
+
+                <p>这个城堡项目让我深入理解了红石电路的复杂性和可能性。通过合理设计，红石系统可以融入建筑，既不破坏美观又提升功能性。我特别喜欢主城门的设计，它实现了实用与美观的完美结合。</p>
+
+                <p>对于想要尝试红石建筑的玩家，我有以下建议：</p>
+
+                <ol>
+                    <li>先在创造模式中测试你的红石电路，确保它能正常工作</li>
+                    <li>为红石线路预留足够的空间，尤其是在大型建筑中</li>
+                    <li>使用红石中继器延长信号并防止串联干扰</li>
+                    <li>利用粘液块和活塞可以移动整个墙面，创造隐藏门</li>
+                    <li>兼顾美观性，尽量隐藏所有的红石线路和装置</li>
+                </ol>
+
+                <p>希望我的分享能给大家带来灵感，如果您有任何问题或建议，欢迎在评论区留言！</p>
+            </article>
+
+            <!-- 评论区 -->
+            <section class="comments-section">
+                <h2 class="section-title">玩家评论</h2>
+
+                <div class="comment-list">
+                    <!-- 评论1 -->
+                    <div class="comment">
+                        <img src="img/comment-avatar1.png" alt="红帽Steve" class="comment-avatar">
+                        <div class="comment-content">
+                            <h3 class="comment-author">红帽Steve</h3>
+                            <p class="comment-text">太厉害了！红石门思路清晰！我一直想做类似的设计但总是卡在电路部分，你的教程让我豁然开朗。</p>
+                            <span class="comment-time">2025-04-15 14:30</span>
+                        </div>
+                    </div>
+
+                    <!-- 评论2 -->
+                    <div class="comment">
+                        <img src="img/comment-avatar2.png" alt="绿发Alex" class="comment-avatar">
+                        <div class="comment-content">
+                            <h3 class="comment-author">绿发Alex</h3>
+                            <p class="comment-text">学到了新东西，感谢分享！尤其是密室隐藏门的设计太巧妙了，已经在我的生存世界实验成功。请问粘液块连接书架的具体方法能详细说一下吗？</p>
+                            <span class="comment-time">2025-04-16 09:45</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 评论表单 -->
+                <div class="comment-form">
+                    <h3>发表评论</h3>
+                    <form id="commentForm">
+                        <div class="form-group">
+                            <label for="commentName" class="form-label">昵称</label>
+                            <input type="text" id="commentName" class="form-control" placeholder="请输入你的游戏ID或昵称"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="commentText" class="form-label">评论内容</label>
+                            <textarea id="commentText" class="form-control" placeholder="分享你的想法和问题..."
+                                required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">提交评论</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 MC百科. 保留所有权利。作者：杨汶川</p>
+            <p>本网站仅用于学习和分享，与Mojang和Microsoft没有官方关联。</p>
+            <p>联系方式：13325766744 | 邮箱：641339238@qq.com</p>
+        </div>
+    </footer>
+
+    <div class="custom-back-to-top" id="backToTop">
+        <a href="#"><img src="img/像素上箭头.png" alt="返回顶部"></a>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 返回顶部按钮
+            const backToTopButton = document.getElementById('backToTop');
+
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+            });
+
+            backToTopButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // 评论表单提交（模拟）
+            const commentForm = document.getElementById('commentForm');
+
+            commentForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // 获取表单数据
+                const name = document.getElementById('commentName').value;
+                const text = document.getElementById('commentText').value;
+
+                // 显示提交成功消息
+                alert(`评论已提交成功！\n昵称：${name}\n内容：${text}\n\n（这是前端模拟，实际评论未保存）`);
+
+                // 重置表单
+                commentForm.reset();
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MC百科 - 我的世界资源与攻略站</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 引入像素风格字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- 引入动画库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        /* 添加页面特定样式 */
+        /* 自定义滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(58, 58, 58, 0.1);
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #8dc63f, #5d8a2a);
+            border-radius: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background-clip: padding-box;
+            transition: all 0.3s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #74a534, #4a6f22);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 滚动进度指示器 */
+        .scroll-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #8dc63f, #5d8a2a);
+            z-index: 1001;
+            transition: width 0.1s ease;
+        }
+
+        /* 滚动动画增强 */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 章节指示器样式 */
+        .section-indicator {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 90;
+        }
+
+        .section-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(141, 198, 63, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .section-dot.active {
+            background-color: #8dc63f;
+            transform: scale(1.2);
+        }
+
+        .section-dot:hover {
+            background-color: #74a534;
+            transform: scale(1.2);
+        }
+
+        .section-dot::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            font-size: 0.7rem;
+            padding: 5px 10px;
+            border-radius: 4px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .section-dot:hover::after {
+            opacity: 1;
+            visibility: visible;
+            right: 25px;
+        }
+
+        /* 视差滚动背景 */
+        .parallax-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-image: url('img/pixel-bg.png');
+            background-size: 200px;
+            background-repeat: repeat;
+            opacity: 0.03;
+            z-index: -1;
+            transform: translateZ(-10px) scale(1.5);
+        }
+
+        /* 阅读进度指示器 */
+        .reading-progress {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 90;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .reading-progress.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .reading-progress-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .reading-progress::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: #8dc63f;
+            animation: spin 1.5s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 平滑滚动效果 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .banner-text {
+            animation: fadeDown 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        @keyframes fadeDown {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 像素风格的粒子背景 */
+        .pixel-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* 装饰元素 */
+        .floating-element {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.8;
+            transition: transform 0.5s ease;
+            image-rendering: pixelated;
+            animation: float 6s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-15px) rotate(5deg);
+            }
+        }
+
+        .floating-element:nth-child(even) {
+            animation-duration: 8s;
+            animation-delay: 1s;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            animation: bounce 2s infinite;
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 0.8;
+        }
+
+        .scroll-indicator:hover {
+            opacity: 1;
+            transform: translateX(-50%) scale(1.2);
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+
+        .entry-card {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                box-shadow 0.4s ease,
+                border-color 0.4s ease,
+                background-color 0.4s ease;
+        }
+
+        .entry-card:hover {
+            transform: scale(1.05) translateY(-5px);
+            border-color: #8dc63f;
+            box-shadow: 0 15px 30px rgba(141, 198, 63, 0.3);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .entry-card:hover .entry-icon {
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.15);
+            }
+        }
+
+        .entry-card .entry-link {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .entry-card .entry-link:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #8dc63f;
+            transition: width 0.3s ease;
+        }
+
+        .entry-card .entry-link:hover:before {
+            width: 100%;
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 32px;
+            height: 32px;
+            background-image: url('img/hamburger.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            cursor: pointer;
+            margin-right: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        header.scrolled {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background-color: rgba(58, 58, 58, 0.95);
+            animation: slideDown 0.3s forwards;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* 3D闪烁效果 */
+        .logo-3d {
+            text-shadow: 0 0 1px #8dc63f,
+                0 0 2px #8dc63f,
+                0 0 5px #8dc63f,
+                0 0 10px #8dc63f;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #8dc63f, 0 0 10px #8dc63f;
+            }
+
+            to {
+                text-shadow: 0 0 10px #8dc63f, 0 0 20px #8dc63f, 0 0 30px #8dc63f;
+            }
+        }
+
+        /* 响应式样式 */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            header {
+                padding: 1rem;
+                justify-content: space-between;
+            }
+
+            nav ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: rgba(58, 58, 58, 0.95);
+                padding: 1rem;
+                z-index: 999;
+                border-bottom: 4px solid #8dc63f;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                backdrop-filter: blur(5px);
+                transform: translateY(-10px);
+                opacity: 0;
+                transition: transform 0.3s ease, opacity 0.3s ease;
+            }
+
+            nav ul.mobile-active {
+                display: flex;
+                transform: translateY(0);
+                opacity: 1;
+            }
+
+            nav ul li {
+                margin: 0.5rem 0;
+                transform: translateX(-10px);
+                opacity: 0;
+                transition: transform 0.3s ease, opacity 0.3s ease;
+                transition-delay: calc(var(--item-index) * 0.05s);
+            }
+
+            nav ul.mobile-active li {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* 天气按钮样式 */
+        #weatherToggleBtn {
+            position: fixed;
+            z-index: 1000;
+            cursor: grab;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            user-select: none;
+            touch-action: none;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6));
+            border: 3px solid #fff;
+            border-radius: 4px;
+            color: #fff;
+            font-family: 'Press Start 2P', 'Minecraft', 'Consolas', 'Courier New', monospace, Arial, sans-serif;
+            font-size: 14px;
+            box-shadow: 
+                0 2px 0 #fff,
+                0 0 0 2px #7A5B3E inset,
+                0 4px 8px rgba(0, 0, 0, 0.3);
+            text-shadow: 2px 2px 0 #222, 0 0 4px #fff8;
+            letter-spacing: 1px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 
+                    0 2px 0 var(--border-color, #fff),
+                    0 0 0 2px #7A5B3E inset,
+                    0 4px 8px rgba(0, 0, 0, 0.3);
+            }
+            50% {
+                box-shadow: 
+                    0 2px 0 var(--border-color, #fff),
+                    0 0 0 2px #7A5B3E inset,
+                    0 4px 12px rgba(0, 0, 0, 0.4),
+                    0 0 8px rgba(255, 255, 255, 0.2);
+            }
+            100% {
+                box-shadow: 
+                    0 2px 0 var(--border-color, #fff),
+                    0 0 0 2px #7A5B3E inset,
+                    0 4px 8px rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        #weatherToggleBtn.dragging {
+            cursor: grabbing;
+            transform: scale(1.1) translateY(-2px);
+            opacity: 0.9;
+            box-shadow: 
+                0 4px 0 #fff,
+                0 0 0 2px #7A5B3E inset,
+                0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        #weatherToggleBtn.auto-hide {
+            opacity: 0.3;
+            transform: scale(0.95);
+        }
+
+        #weatherToggleBtn:hover {
+            opacity: 1;
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 
+                0 4px 0 #fff,
+                0 0 0 2px #7A5B3E inset,
+                0 6px 12px rgba(0, 0, 0, 0.4),
+                0 0 8px rgba(255, 255, 255, 0.3);
+        }
+
+        #weatherToggleBtn.left-edge {
+            border-left: none;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            padding-left: 16px;
+            box-shadow: 
+                0 2px 0 #fff,
+                0 0 0 2px #7A5B3E inset,
+                0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        #weatherToggleBtn.right-edge {
+            border-right: none;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            padding-right: 16px;
+            box-shadow: 
+                0 2px 0 #fff,
+                0 0 0 2px #7A5B3E inset,
+                0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        #weatherToggleBtn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            border-radius: 1px;
+            pointer-events: none;
+        }
+
+        #weatherToggleBtn::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1px;
+            pointer-events: none;
+        }
+
+        /* 晴天样式 */
+        #weatherToggleBtn[data-weather="sunny"] {
+            border-color: #FFD700;
+            box-shadow: 
+                0 2px 0 #FFD700,
+                0 0 0 2px #7A5B3E inset,
+                0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 雨天样式 */
+        #weatherToggleBtn[data-weather="rainy"] {
+            border-color: #87CEEB;
+            box-shadow: 
+                0 2px 0 #87CEEB,
+                0 0 0 2px #7A5B3E inset,
+                0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 雪天样式 */
+        #weatherToggleBtn[data-weather="snowy"] {
+            border-color: #E0FFFF;
+            box-shadow: 
+                0 2px 0 #E0FFFF,
+                0 0 0 2px #7A5B3E inset,
+                0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 雷暴样式 */
+        #weatherToggleBtn[data-weather="stormy"] {
+            border-color: #4169E1;
+            box-shadow: 
+                0 2px 0 #4169E1,
+                0 0 0 2px #7A5B3E inset,
+                0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 夜晚样式 */
+        #weatherToggleBtn[data-weather="night"] {
+            border-color: #483D8B;
+            box-shadow: 
+                0 2px 0 #483D8B,
+                0 0 0 2px #7A5B3E inset,
+                0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 回到顶部按钮样式 */
+        .custom-back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            transform: translateY(20px);
+        }
+
+        .custom-back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .custom-back-to-top img {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(141, 198, 63, 0.8);
+            padding: 8px;
+            border-radius: 50%;
+            border: 2px solid #5a8017;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            image-rendering: pixelated;
+        }
+
+        .custom-back-to-top:hover img {
+            background-color: #8dc63f;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .custom-back-to-top a {
+            display: block;
+            text-decoration: none;
+            color: transparent;
+        }
+    </style>
+    <!-- 引入AOS动画库 -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- 滚动进度条 -->
+    <div class="scroll-progress-bar" id="scrollProgressBar"></div>
+
+    <!-- 页面阅读进度指示器 -->
+    <div class="reading-progress" id="readingProgress">
+        <div class="reading-progress-circle">0%</div>
+    </div>
+
+    <!-- 章节指示器 -->
+    <div class="section-indicator" id="sectionIndicator">
+        <div class="section-dot" data-tooltip="顶部" data-target="top"></div>
+        <div class="section-dot" data-tooltip="热门内容" data-target="featured"></div>
+        <div class="section-dot" data-tooltip="入口导航" data-target="entries"></div>
+        <div class="section-dot" data-tooltip="推荐内容" data-target="recommendations"></div>
+    </div>
+
+    <!-- 像素风格粒子背景 -->
+    <div class="pixel-particles" id="pixelParticles"></div>
+
+    <!-- 视差背景 -->
+    <div class="parallax-bg" id="parallaxBg"></div>
+
+    <!-- 装饰元素 -->
+    <img src="img/像素木镐图标.png" alt="装饰" class="floating-element" style="top: 30%; left: 5%; width: 40px;">
+    <img src="img/进阶技巧.png" alt="装饰" class="floating-element" style="top: 70%; right: 8%; width: 35px;">
+    <img src="img/放大镜.png" alt="装饰" class="floating-element" style="top: 40%; right: 15%; width: 30px;">
+
+    <!-- 天气切换按钮和特效容器 -->
+    <button id="weatherToggleBtn" class="auto-hide">☀️ 天气</button>
+    <canvas id="weatherEffectCanvas"
+        style="position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:1000;"></canvas>
+
+    <header>
+        <div class="logo-container">
+            <img src="img/MC百科像素风Logo.png" alt="MC百科Logo" class="logo">
+            <h1 class="logo-3d">MC百科</h1>
+        </div>
+        <div class="menu-toggle" onclick="toggleMobileMenu()"></div>
+        <nav>
+            <ul id="navMenu">
+                <li style="--item-index: 0"><a href="index.html" class="active">首页</a></li>
+                <li style="--item-index: 1"><a href="basic.html">新手入门</a></li>
+                <li style="--item-index: 2"><a href="advanced.html">进阶技巧</a></li>
+                <li style="--item-index: 3"><a href="mod.html">模组介绍</a></li>
+                <li style="--item-index: 4"><a href="video.html">视频推荐</a></li>
+                <li style="--item-index: 5"><a href="share.html">玩家心得</a></li>
+                <li style="--item-index: 6"><a href="search.html">资源搜索</a></li>
+                <li style="--item-index: 7"><a href="game.html">生物图鉴</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="banner">
+        <img src="img/banner图.png" alt="MC百科 Banner" class="banner-img">
+        <div class="banner-text">
+            <h2 class="animate__animated animate__fadeInDown animate__delay-1s">探索、创造、生存</h2>
+            <p class="animate__animated animate__fadeInUp animate__delay-1s">欢迎来到我的世界知识共享平台</p>
+        </div>
+        <img src="img/像素下箭头.png" alt="向下滚动" class="scroll-indicator" onclick="scrollToMain()">
+    </section>
+
+    <main>
+        <section id="featured" class="featured-content" data-aos="fade-up">
+            <h2 class="section-title" data-aos="fade-right">热门内容</h2>
+            <div class="featured-grid" data-aos="fade-up" data-aos-delay="200">
+                <!-- 这里可以添加热门内容 -->
+            </div>
+        </section>
+
+        <section id="entries" class="entry-categories">
+            <div class="entry-card" style="animation-delay: 0.3s;" data-aos="fade-up" data-aos-delay="100">
+                <img src="img/像素木镐图标.png" alt="新手入门" class="entry-icon">
+                <h3>新手入门</h3>
+                <p>从零开始了解我的世界的基础知识和操作技巧</p>
+                <a href="basic.html" class="entry-link">开始探索</a>
+            </div>
+
+            <div class="entry-card" style="animation-delay: 0.45s;" data-aos="fade-up" data-aos-delay="200">
+                <img src="img/进阶技巧.png" alt="进阶技巧" class="entry-icon">
+                <h3>进阶技巧</h3>
+                <p>提升你的游戏体验，掌握高级生存和建造技巧</p>
+                <a href="advanced.html" class="entry-link">提升能力</a>
+            </div>
+
+            <div class="entry-card" style="animation-delay: 0.6s;" data-aos="fade-up" data-aos-delay="300">
+                <img src="img/像素开箱图标.png" alt="模组介绍" class="entry-icon">
+                <h3>模组介绍</h3>
+                <p>探索丰富多彩的我的世界模组世界</p>
+                <a href="mod.html" class="entry-link">了解模组</a>
+            </div>
+
+            <div class="entry-card" style="animation-delay: 0.75s;" data-aos="fade-up" data-aos-delay="400">
+                <img src="img/像素电视.png" alt="视频推荐" class="entry-icon">
+                <h3>视频推荐</h3>
+                <p>精选我的世界优质视频和创作者</p>
+                <a href="video.html" class="entry-link">观看视频</a>
+            </div>
+
+            <div class="entry-card" style="animation-delay: 0.9s;" data-aos="fade-up" data-aos-delay="500">
+                <img src="img/翻开的书.png" alt="玩家心得" class="entry-icon">
+                <h3>玩家心得</h3>
+                <p>分享你的我的世界故事和游戏体验</p>
+                <a href="share.html" class="entry-link">分享心得</a>
+            </div>
+
+            <div class="entry-card" style="animation-delay: 1.05s;" data-aos="fade-up" data-aos-delay="600">
+                <img src="img/放大镜.png" alt="资源搜索" class="entry-icon">
+                <h3>资源搜索</h3>
+                <p>查找和下载各种我的世界资源</p>
+                <a href="search.html" class="entry-link">搜索资源</a>
+            </div>
+
+            <div class="entry-card" style="animation-delay: 1.2s;" data-aos="fade-up" data-aos-delay="700">
+                <img src="img/monster_zombie_idle.png" alt="生物图鉴" class="entry-icon">
+                <h3>生物图鉴</h3>
+                <p>收录Minecraft主要生物，支持分类、搜索与详细百科弹窗，像素风还原官方设定。</p>
+                <a href="game.html" class="entry-link">进入图鉴</a>
+            </div>
+        </section>
+
+        <section id="recommendations" class="recommendations" data-aos="fade-up">
+            <h2 class="section-title" data-aos="fade-right">推荐内容</h2>
+            <div class="recommendations-grid" data-aos="fade-up" data-aos-delay="200">
+                <!-- 这里可以添加推荐内容 -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 MC百科. 保留所有权利。作者：杨汶川</p>
+            <p>本网站仅用于学习和分享，与Mojang和Microsoft没有官方关联。</p>
+            <p>联系方式：13325766744 | 邮箱：641339238@qq.com</p>
+        </div>
+    </footer>
+
+    <div class="custom-back-to-top" id="backToTop">
+        <a href="#"><img src="img/像素上箭头.png" alt="返回顶部" class="animate__animated animate__pulse animate__infinite"></a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // 页面加载完成后的操作
+        document.addEventListener('DOMContentLoaded', function () {
+            // 初始化AOS动画库
+            AOS.init({
+                once: true, // 动画只触发一次
+                offset: 120, // 触发动画的偏移量
+                duration: 800 // 默认动画持续时间
+            });
+
+            // 向下滚动到主要内容区域
+            window.scrollToMain = function () {
+                const main = document.querySelector('main');
+                if (main) {
+                    main.scrollIntoView({ behavior: 'smooth' });
+                }
+            };
+
+            // 移动菜单切换
+            window.toggleMobileMenu = function () {
+                const nav = document.querySelector('nav ul');
+                nav.classList.toggle('mobile-active');
+            };
+
+            // 处理返回顶部按钮
+            const backToTopButton = document.getElementById('backToTop');
+
+            window.addEventListener('scroll', function () {
+                // 当滚动超过300px时显示返回顶部按钮
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+
+                // 当滚动超过50px时为header添加固定样式
+                const header = document.querySelector('header');
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            // 点击返回顶部按钮时平滑滚动到顶部
+            backToTopButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // 创建像素粒子效果
+            createPixelParticles();
+
+            // 设置章节指示器
+            setupSectionIndicator();
+
+            // 设置滚动进度条
+            setupScrollProgressBar();
+
+            // 设置滚动动画
+            setupScrollRevealElements();
+
+            // 设置视差滚动
+            setupParallaxEffect();
+
+            // 设置阅读进度指示器
+            setupReadingProgress();
+        });
+
+        // 创建像素风格的粒子效果
+        function createPixelParticles() {
+            const container = document.getElementById('pixelParticles');
+            if (!container) return;
+
+            const colors = ['#8dc63f', '#5d8a2a', '#3a3a3a', '#666666'];
+            const particleCount = 20; // 减少数量以减轻性能负担
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = Math.floor(Math.random() * 6 + 3) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.opacity = Math.random() * 0.3 + 0.1;
+                particle.style.pointerEvents = 'none';
+
+                // 设置动画
+                const duration = Math.random() * 50 + 30;
+                const delay = Math.random() * 5;
+
+                particle.style.animation = `floatParticle ${duration}s linear ${delay}s infinite`;
+                container.appendChild(particle);
+            }
+
+            // 添加动画关键帧
+            if (!document.getElementById('particleKeyframes')) {
+                const style = document.createElement('style');
+                style.id = 'particleKeyframes';
+                style.innerHTML = `
+                    @keyframes floatParticle {
+                        0% { transform: translateY(0) rotate(0deg); }
+                        100% { transform: translateY(-100vh) rotate(360deg); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // 设置章节指示器
+        function setupSectionIndicator() {
+            const sectionDots = document.querySelectorAll('.section-dot');
+            const sections = document.querySelectorAll('section[id]');
+
+            if (sections.length === 0 || sectionDots.length === 0) return;
+
+            // 为每个点添加点击事件
+            sectionDots.forEach(dot => {
+                dot.addEventListener('click', function () {
+                    const targetId = this.getAttribute('data-target');
+                    const target = document.getElementById(targetId);
+
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // 监听滚动以更新活动状态
+            window.addEventListener('scroll', function () {
+                let currentSectionId = '';
+
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+
+                    if (pageYOffset >= (sectionTop - 200)) {
+                        currentSectionId = section.getAttribute('id');
+                    }
+                });
+
+                sectionDots.forEach(dot => {
+                    if (dot.getAttribute('data-target') === currentSectionId) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            });
+
+            // 初始化时触发一次滚动事件
+            window.dispatchEvent(new Event('scroll'));
+        }
+
+        // 设置滚动进度条
+        function setupScrollProgressBar() {
+            const progressBar = document.getElementById('scrollProgressBar');
+            if (!progressBar) return;
+
+            window.addEventListener('scroll', function () {
+                const totalHeight = document.body.scrollHeight - window.innerHeight;
+                const progress = (window.scrollY / totalHeight) * 100;
+                progressBar.style.width = progress + '%';
+            });
+        }
+
+        // 设置滚动动画
+        function setupScrollRevealElements() {
+            // 添加滚动显示类
+            const elements = document.querySelectorAll('h2:not([data-aos]), h3:not([data-aos]), p:not([data-aos]), .entry-card:not([data-aos])');
+            elements.forEach(el => {
+                if (!el.classList.contains('animate__animated')) {
+                    el.classList.add('scroll-reveal');
+                }
+            });
+
+            // 创建滚动观察器
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            // 观察所有元素
+            document.querySelectorAll('.scroll-reveal').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // 设置视差滚动效果
+        function setupParallaxEffect() {
+            const parallaxBg = document.getElementById('parallaxBg');
+            if (!parallaxBg) return;
+
+            window.addEventListener('scroll', function () {
+                const scrollY = window.scrollY;
+                parallaxBg.style.transform = `translateY(${scrollY * 0.05}px)`;
+            });
+        }
+
+        // 设置阅读进度指示器
+        function setupReadingProgress() {
+            const readingProgress = document.getElementById('readingProgress');
+            const readingProgressCircle = readingProgress.querySelector('.reading-progress-circle');
+
+            if (!readingProgress || !readingProgressCircle) return;
+
+            // 显示阅读进度指示器
+            setTimeout(() => {
+                readingProgress.classList.add('visible');
+            }, 1000);
+
+            // 更新阅读进度
+            window.addEventListener('scroll', function () {
+                const totalHeight = document.body.scrollHeight - window.innerHeight;
+                const progress = Math.round((window.scrollY / totalHeight) * 100);
+                readingProgressCircle.textContent = progress + '%';
+
+                // 根据进度添加不同的颜色
+                if (progress > 75) {
+                    readingProgressCircle.style.color = '#2e7d32';
+                } else if (progress > 50) {
+                    readingProgressCircle.style.color = '#74a534';
+                } else if (progress > 25) {
+                    readingProgressCircle.style.color = '#8dc63f';
+                } else {
+                    readingProgressCircle.style.color = '#aaa';
+                }
+            });
+
+            // 初始化触发一次
+            window.dispatchEvent(new Event('scroll'));
+        }
+    </script>
+</body>
+
+</html>

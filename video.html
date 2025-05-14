@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频推荐 - MC百科</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 引入像素风格字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* 视频页面特定样式 */
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #2e7d32;
+            font-size: 2rem;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .page-intro {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        /* 搜索和高级筛选区域 */
+        .search-and-filter {
+            margin-bottom: 2.5rem;
+            background-color: rgba(141, 198, 63, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            border: 2px dashed #8dc63f;
+        }
+
+        .search-bar {
+            display: flex;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.8rem 1.2rem;
+            border: 2px solid #ddd;
+            border-radius: 8px 0 0 8px;
+            font-size: 1rem;
+            background-color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #8dc63f;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(141, 198, 63, 0.2);
+        }
+
+        .search-button {
+            background-color: #8dc63f;
+            color: white;
+            border: none;
+            padding: 0 1.5rem;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-button:hover {
+            background-color: #5a8017;
+        }
+
+        .advanced-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .filter-select {
+            padding: 0.6rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            background-color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            border-color: #8dc63f;
+            outline: none;
+        }
+
+        .reset-filters {
+            padding: 0.6rem 1rem;
+            background-color: #f5f5f5;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: flex-end;
+        }
+
+        .reset-filters:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* 分类过滤器 */
+        .video-filter {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .filter-button {
+            padding: 0.8rem 2rem;
+            font-size: 1.2rem;
+            background-color: #f5f5f5;
+            border: 3px solid #ddd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-button:first-child {
+            border-radius: 8px 0 0 8px;
+        }
+
+        .filter-button:last-child {
+            border-radius: 0 8px 8px 0;
+        }
+
+        .filter-button.active {
+            background-color: #8dc63f;
+            color: white;
+            border-color: #5a8017;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .filter-button:hover:not(.active) {
+            background-color: #e0e0e0;
+            border-color: #bbb;
+        }
+
+        /* 视频网格 */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .video-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 3px solid #ddd;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .video-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            border-color: #8dc63f;
+            z-index: 10;
+        }
+
+        .thumbnail-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 宽高比 */
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .video-thumbnail {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-origin: center;
+            filter: brightness(0.9);
+        }
+
+        .thumbnail-container:hover .video-thumbnail {
+            transform: scale(1.1);
+            filter: brightness(1.1);
+        }
+        
+        .video-progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            width: 0%;
+            background: linear-gradient(90deg, #ff3019 0%, #ff9e19 100%);
+            transition: width 0.3s ease;
+            z-index: 5;
+            opacity: 0;
+        }
+        
+        .thumbnail-container:hover .video-progress-bar {
+            animation: progress-animate 3s ease-in-out forwards;
+            opacity: 1;
+        }
+        
+        @keyframes progress-animate {
+            0% { width: 0%; }
+            30% { width: 45%; }
+            60% { width: 65%; }
+            100% { width: 87%; }
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 60px;
+            height: 60px;
+            opacity: 0.7;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 2;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+        }
+
+        .thumbnail-container:hover .play-overlay {
+            transform: translate(-50%, -50%) scale(1.1);
+            opacity: 1;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+        
+        .video-duration {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 3;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .video-views {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(141, 198, 63, 0.8);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            z-index: 3;
+            transform: translateY(-30px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .thumbnail-container:hover .video-views {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .video-info {
+            padding: 1.2rem;
+            background: linear-gradient(to bottom, #ffffff 0%, #f9f9f9 100%);
+            position: relative;
+            z-index: 1;
+        }
+
+        .video-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: #2e7d32;
+            transition: color 0.3s ease;
+        }
+        
+        .video-card:hover .video-title {
+            color: #8dc63f;
+        }
+
+        .platform-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .left-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .platform-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .video-card:hover .platform-icon {
+            transform: scale(1.2);
+        }
+        
+        .upload-date {
+            font-size: 0.8rem;
+            color: #777;
+            margin-left: auto;
+        }
+
+        /* 视频弹窗 */
+        .video-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem;
+            perspective: 1200px;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        .popup-content {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            border: 4px solid #8dc63f;
+            animation: popup-open 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            transform-origin: center;
+            display: flex;
+            flex-direction: column;
+            margin: auto;
+            margin-top: 2vh;
+            margin-bottom: 2vh;
+            max-height: 96vh;
+        }
+        
+        @keyframes popup-open {
+            0% { 
+                transform: scale(0.7) rotateX(10deg);
+                opacity: 0;
+            }
+            100% { 
+                transform: scale(1) rotateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .popup-closing {
+            animation: popup-close 0.4s ease-in forwards;
+        }
+        
+        @keyframes popup-close {
+            0% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% { 
+                transform: scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        .video-iframe-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 宽高比 */
+            background-color: #000;
+        }
+
+        .video-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .video-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            z-index: 2;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top: 5px solid #8dc63f;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background-color: #f44336;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border: 2px solid white;
+            z-index: 10;
+            font-size: 18px;
+            transition: all 0.2s ease;
+        }
+        
+        .popup-close:hover {
+            background-color: #d32f2f;
+            transform: rotate(90deg);
+        }
+        
+        /* 视频预览效果 */
+        .thumbnail-container .preview-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.7) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+        
+        .thumbnail-container:hover .preview-overlay {
+            opacity: 1;
+        }
+        
+        .video-preview-frames {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 0;
+        }
+        
+        .thumbnail-container:hover .video-preview-frames {
+            opacity: 1;
+            animation: frame-preview 8s steps(4) infinite;
+        }
+        
+        @keyframes frame-preview {
+            0%, 100% { background-position: 0% 0%; }
+            25% { background-position: 100% 0%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+        }
+
+        /* 返回顶部按钮 */
+        .custom-back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            transform: translateY(20px);
+        }
+
+        .custom-back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .custom-back-to-top img {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(141, 198, 63, 0.8);
+            padding: 8px;
+            border-radius: 50%;
+            border: 2px solid #5a8017;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .custom-back-to-top:hover img {
+            background-color: #8dc63f;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .popup-content {
+                width: 95%;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            
+            .popup-video-meta {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .popup-upload-info {
+                margin-top: 8px;
+            }
+            
+            .popup-video-rating {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .rating-stars {
+                width: 100%;
+            }
+            
+            .rating-submit-btn {
+                width: 100%;
+            }
+            
+            .related-videos-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .video-popup {
+                padding: 0;
+            }
+            
+            .popup-content {
+                width: 100%;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+            
+            .popup-video-title {
+                font-size: 1.2rem;
+            }
+            
+            .related-videos-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stars-container {
+                display: flex;
+                flex-wrap: wrap;
+            }
+            
+            .popup-close {
+                top: 5px;
+                right: 5px;
+            }
+        }
+
+        /* 确保视频弹窗在任何设备上都能正确显示 */
+        .video-popup {
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .popup-content {
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            width: 90%;
+            max-width: 1000px;
+        }
+
+        .video-iframe-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 宽高比 */
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        .video-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* 视频详情区域样式 */
+        .popup-video-info {
+            padding: 1.5rem;
+            background-color: #f9f9f9;
+            border-top: 1px solid #e0e0e0;
+            overflow: auto; /* 内容过多时可滚动 */
+            flex: 1; /* 使用flex布局，自动占用剩余空间 */
+        }
+        
+        /* 自定义滚动条 */
+        .popup-video-info::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .popup-video-info::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .popup-video-info::-webkit-scrollbar-thumb {
+            background: #8dc63f;
+            border-radius: 4px;
+        }
+
+        .popup-video-info::-webkit-scrollbar-thumb:hover {
+            background: #5a8017;
+        }
+        
+        .popup-video-title {
+            font-size: 1.5rem;
+            color: #2e7d32;
+            margin-bottom: 1rem;
+        }
+        
+        .popup-video-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .popup-platform {
+            display: flex;
+            align-items: center;
+        }
+        
+        .popup-platform-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+        
+        .meta-separator {
+            margin: 0 8px;
+            color: #ccc;
+        }
+        
+        /* 评分系统样式 */
+        .popup-video-rating {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: #f0f7e6;
+            border-radius: 8px;
+            border: 1px dashed #8dc63f;
+        }
+        
+        .rating-stars {
+            display: flex;
+            align-items: center;
+        }
+        
+        .rating-text {
+            margin-right: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .stars-container {
+            display: flex;
+            margin-right: 10px;
+        }
+        
+        .star {
+            font-size: 1.5rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .star.active {
+            color: #ffb400;
+        }
+        
+        .star:hover,
+        .star.hover {
+            color: #ffb400;
+        }
+        
+        .rating-value {
+            font-weight: bold;
+            color: #2e7d32;
+        }
+        
+        .rating-submit-btn {
+            padding: 0.5rem 1rem;
+            background-color: #8dc63f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .rating-submit-btn:hover {
+            background-color: #5a8017;
+        }
+        
+        /* 操作按钮样式 */
+        .popup-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0.6rem 1rem;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .action-btn svg {
+            transition: transform 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .action-btn:hover svg {
+            transform: scale(1.2);
+        }
+        
+        /* 相关视频样式 */
+        .related-videos {
+            margin-top: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden; /* 防止溢出 */
+        }
+        
+        .related-videos h4 {
+            font-size: 1.2rem;
+            color: #2e7d32;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .related-videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .related-video-card {
+            background-color: white;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid #eee;
+            cursor: pointer;
+        }
+        
+        .related-video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+            border-color: #8dc63f;
+        }
+        
+        .related-thumbnail-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            overflow: hidden;
+        }
+        
+        .related-thumbnail {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .related-duration {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            padding: 1px 4px;
+            border-radius: 2px;
+            font-size: 10px;
+        }
+        
+        .related-info {
+            padding: 0.5rem;
+        }
+        
+        .related-title {
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+            color: #333;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.2;
+        }
+        
+        .related-platform {
+            font-size: 0.7rem;
+            color: #777;
+            display: flex;
+            align-items: center;
+        }
+        
+        .related-platform-icon {
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="img/MC百科像素风Logo.png" alt="MC百科Logo" class="logo">
+            <h1>MC百科</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="basic.html">新手入门</a></li>
+                <li><a href="advanced.html">进阶技巧</a></li>
+                <li><a href="mod.html">模组介绍</a></li>
+                <li><a href="video.html" class="active">视频推荐</a></li>
+                <li><a href="share.html">玩家心得</a></li>
+                <li><a href="search.html">资源搜索</a></li>
+                <li><a href="game.html">生物图鉴</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="content-section">
+            <h1 class="page-title">Minecraft 视频精选</h1>
+            <p class="page-intro">探索精彩的Minecraft视频内容，学习游戏技巧或享受趣味剪辑</p>
+            
+            <!-- 搜索和高级筛选区域 -->
+            <div class="search-and-filter">
+                <div class="search-bar">
+                    <input type="text" class="search-input" id="videoSearch" placeholder="搜索视频标题、内容或创作者...">
+                    <button class="search-button" id="searchButton">搜索</button>
+                </div>
+                <div class="advanced-filters">
+                    <div class="filter-group">
+                        <span class="filter-label">发布平台</span>
+                        <select class="filter-select" id="platformFilter">
+                            <option value="all">全部平台</option>
+                            <option value="bilibili">哔哩哔哩</option>
+                            <option value="youtube">YouTube</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">发布时间</span>
+                        <select class="filter-select" id="timeFilter">
+                            <option value="all">全部时间</option>
+                            <option value="week">一周内</option>
+                            <option value="month">一个月内</option>
+                            <option value="year">一年内</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">视频时长</span>
+                        <select class="filter-select" id="durationFilter">
+                            <option value="all">全部时长</option>
+                            <option value="short">短视频 (< 5分钟)</option>
+                            <option value="medium">中等 (5-20分钟)</option>
+                            <option value="long">长视频 (> 20分钟)</option>
+                        </select>
+                    </div>
+                    <button class="reset-filters" id="resetFilters">重置筛选</button>
+                </div>
+            </div>
+            
+            <!-- 分类过滤器 -->
+            <div class="video-filter">
+                <div class="filter-button active" data-category="all">全部视频</div>
+                <div class="filter-button" data-category="tutorial">教学类</div>
+                <div class="filter-button" data-category="entertainment">娱乐类</div>
+                <div class="filter-button" data-category="news">新闻资讯</div>
+            </div>
+            
+            <!-- 视频网格 -->
+            <div class="video-grid">
+                <!-- 红石电路教学视频 -->
+                <div class="video-card" data-category="tutorial" data-video-id="BV1JzNUeuEg2">
+                    <div class="thumbnail-container">
+                        <div class="video-preview-frames" style="background-image: url('img/vid-redstone.png');"></div>
+                        <img src="img/vid-redstone.png" alt="红石电路教学" class="video-thumbnail">
+                        <div class="preview-overlay"></div>
+                        <img src="img/play-hover.png" alt="播放" class="play-overlay">
+                        <div class="video-progress-bar"></div>
+                        <div class="video-duration">14:35</div>
+                        <div class="video-views">12.8万次观看</div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">红石电路教学</h3>
+                        <div class="platform-info">
+                            <div class="left-info">
+                                <img src="img/icon-bilibili.png" alt="B站" class="platform-icon">
+                                <span>哔哩哔哩</span>
+                            </div>
+                            <span class="upload-date">2023-06-15</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 整合包模组实况 -->
+                <div class="video-card" data-category="tutorial" data-video-id="BV1F6LBzeEzK">
+                    <div class="thumbnail-container">
+                        <div class="video-preview-frames" style="background-image: url('img/vid-modpack.png');"></div>
+                        <img src="img/vid-modpack.png" alt="整合包模组实况" class="video-thumbnail">
+                        <div class="preview-overlay"></div>
+                        <img src="img/play-hover.png" alt="播放" class="play-overlay">
+                        <div class="video-progress-bar"></div>
+                        <div class="video-duration">23:42</div>
+                        <div class="video-views">5.6万次观看</div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">整合包模组实况</h3>
+                        <div class="platform-info">
+                            <div class="left-info">
+                                <img src="img/icon-bilibili.png" alt="B站" class="platform-icon">
+                                <span>哔哩哔哩</span>
+                            </div>
+                            <span class="upload-date">2023-08-21</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- MC爆笑瞬间合集 -->
+                <div class="video-card" data-category="entertainment" data-video-id="BV1rr4y1N72P">
+                    <div class="thumbnail-container">
+                        <div class="video-preview-frames" style="background-image: url('img/vid-funny.png');"></div>
+                        <img src="img/vid-funny.png" alt="MC爆笑瞬间合集" class="video-thumbnail">
+                        <div class="preview-overlay"></div>
+                        <img src="img/play-hover.png" alt="播放" class="play-overlay">
+                        <div class="video-progress-bar"></div>
+                        <div class="video-duration">10:08</div>
+                        <div class="video-views">18.3万次观看</div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">MC爆笑瞬间合集</h3>
+                        <div class="platform-info">
+                            <div class="left-info">
+                                <img src="img/icon-bilibili.png" alt="B站" class="platform-icon">
+                                <span>哔哩哔哩</span>
+                            </div>
+                            <span class="upload-date">2023-09-03</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 生存模式攻略 -->
+                <div class="video-card" data-category="tutorial" data-video-id="BV1MMftYEEZN">
+                    <div class="thumbnail-container">
+                        <div class="video-preview-frames" style="background-image: url('img/basic-craft.png');"></div>
+                        <img src="img/basic-craft.png" alt="生存模式攻略" class="video-thumbnail">
+                        <div class="preview-overlay"></div>
+                        <img src="img/play-hover.png" alt="播放" class="play-overlay">
+                        <div class="video-progress-bar"></div>
+                        <div class="video-duration">17:22</div>
+                        <div class="video-views">9.5万次观看</div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">生存模式攻略</h3>
+                        <div class="platform-info">
+                            <div class="left-info">
+                                <img src="img/icon-bilibili.png" alt="B站" class="platform-icon">
+                                <span>哔哩哔哩</span>
+                            </div>
+                            <span class="upload-date">2023-05-18</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 自动化农场建造 -->
+                <div class="video-card" data-category="tutorial" data-video-id="BV1fF411375f">
+                    <div class="thumbnail-container">
+                        <div class="video-preview-frames" style="background-image: url('img/auto-farm.png');"></div>
+                        <img src="img/auto-farm.png" alt="自动化农场建造" class="video-thumbnail">
+                        <div class="preview-overlay"></div>
+                        <img src="img/play-hover.png" alt="播放" class="play-overlay">
+                        <div class="video-progress-bar"></div>
+                        <div class="video-duration">19:46</div>
+                        <div class="video-views">8.2万次观看</div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">自动化农场建造</h3>
+                        <div class="platform-info">
+                            <div class="left-info">
+                                <img src="img/icon-bilibili.png" alt="B站" class="platform-icon">
+                                <span>哔哩哔哩</span>
+                            </div>
+                            <span class="upload-date">2023-07-29</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 趣味建筑大赛 -->
+                <div class="video-card" data-category="entertainment" data-video-id="j7dft-PolnQ">
+                    <div class="thumbnail-container">
+                        <div class="video-preview-frames" style="background-image: url('img/survival-night.png');"></div>
+                        <img src="img/survival-night.png" alt="趣味建筑大赛" class="video-thumbnail">
+                        <div class="preview-overlay"></div>
+                        <img src="img/play-hover.png" alt="播放" class="play-overlay">
+                        <div class="video-progress-bar"></div>
+                        <div class="video-duration">28:17</div>
+                        <div class="video-views">4.3万次观看</div>
+                    </div>
+                    <div class="video-info">
+                        <h3 class="video-title">趣味建筑大赛</h3>
+                        <div class="platform-info">
+                            <div class="left-info">
+                                <img src="img/icon-youtube.png" alt="YouTube" class="platform-icon">
+                                <span>YouTube</span>
+                            </div>
+                            <span class="upload-date">2023-10-05</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 视频弹窗 -->
+    <div class="video-popup" id="videoPopup">
+        <div class="popup-content">
+            <div class="popup-close" id="popupClose">×</div>
+            <div class="video-iframe-container">
+                <iframe class="video-iframe" id="videoIframe" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <!-- 添加视频信息区域 -->
+            <div class="popup-video-info">
+                <h3 class="popup-video-title" id="popupVideoTitle">视频标题加载中...</h3>
+                <div class="popup-video-meta">
+                    <div class="popup-platform">
+                        <img src="" alt="" id="popupPlatformIcon" class="popup-platform-icon">
+                        <span id="popupPlatformName">平台</span>
+                    </div>
+                    <div class="popup-upload-info">
+                        <span id="popupUploadDate">上传日期</span>
+                        <span class="meta-separator">|</span>
+                        <span id="popupViews">观看次数</span>
+                    </div>
+                </div>
+                <div class="popup-video-rating">
+                    <div class="rating-stars">
+                        <span class="rating-text">用户评分：</span>
+                        <div class="stars-container">
+                            <i class="star" data-rating="1">★</i>
+                            <i class="star" data-rating="2">★</i>
+                            <i class="star" data-rating="3">★</i>
+                            <i class="star" data-rating="4">★</i>
+                            <i class="star" data-rating="5">★</i>
+                        </div>
+                        <span class="rating-value" id="currentRating">4.7</span>
+                    </div>
+                    <button class="rating-submit-btn" id="submitRating">提交评分</button>
+                </div>
+                <div class="popup-actions">
+                    <button class="action-btn" id="shareVideo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
+                        </svg>
+                        分享
+                    </button>
+                    <button class="action-btn" id="addToFavorites">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+                        </svg>
+                        收藏
+                    </button>
+                    <button class="action-btn" id="downloadVideo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                            <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                        </svg>
+                        下载
+                    </button>
+                </div>
+                <div class="related-videos">
+                    <h4>相关推荐</h4>
+                    <div class="related-videos-grid" id="relatedVideosContainer">
+                        <!-- 相关视频将通过JavaScript动态填充 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 MC百科. 保留所有权利。作者：杨汶川</p>
+            <p>本网站仅用于学习和分享，与Mojang和Microsoft没有官方关联。</p>
+            <p>联系方式：13325766744 | 邮箱：641339238@qq.com</p>
+        </div>
+    </footer>
+    
+    <div class="custom-back-to-top" id="backToTop">
+        <a href="#"><img src="img/像素上箭头.png" alt="返回顶部"></a>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 返回顶部按钮
+            const backToTopButton = document.getElementById('backToTop');
+            
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+            });
+            
+            backToTopButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // 视频分类过滤
+            const filterButtons = document.querySelectorAll('.filter-button');
+            const videoCards = document.querySelectorAll('.video-card');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的活跃状态
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // 添加当前按钮的活跃状态
+                    this.classList.add('active');
+                    
+                    const category = this.getAttribute('data-category');
+                    
+                    // 根据分类显示/隐藏视频卡片
+                    videoCards.forEach(card => {
+                        if (category === 'all' || card.getAttribute('data-category') === category) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // 搜索功能实现
+            const searchInput = document.getElementById('videoSearch');
+            const searchButton = document.getElementById('searchButton');
+            
+            function performSearch() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                if (!searchTerm) {
+                    // 如果搜索词为空，重置为显示所有卡片
+                    videoCards.forEach(card => {
+                        card.style.display = 'block';
+                    });
+                    return;
+                }
+                
+                // 过滤视频卡片
+                videoCards.forEach(card => {
+                    const title = card.querySelector('.video-title').textContent.toLowerCase();
+                    const platform = card.querySelector('.left-info span').textContent.toLowerCase();
+                    const category = card.getAttribute('data-category').toLowerCase();
+                    
+                    if (title.includes(searchTerm) || platform.includes(searchTerm) || category.includes(searchTerm)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // 重置分类过滤器激活状态
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                filterButtons[0].classList.add('active'); // 激活"全部"按钮
+            }
+            
+            searchButton.addEventListener('click', performSearch);
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            // 高级筛选功能实现
+            const platformFilter = document.getElementById('platformFilter');
+            const timeFilter = document.getElementById('timeFilter');
+            const durationFilter = document.getElementById('durationFilter');
+            const resetFiltersButton = document.getElementById('resetFilters');
+            
+            function applyAdvancedFilters() {
+                const platformValue = platformFilter.value;
+                const timeValue = timeFilter.value;
+                const durationValue = durationFilter.value;
+                
+                const now = new Date();
+                
+                videoCards.forEach(card => {
+                    // 获取卡片信息
+                    const platform = card.querySelector('.platform-icon').alt.toLowerCase();
+                    const uploadDateStr = card.querySelector('.upload-date').textContent;
+                    const duration = card.querySelector('.video-duration').textContent;
+                    
+                    // 解析日期
+                    const uploadDate = new Date(uploadDateStr);
+                    const daysDiff = Math.floor((now - uploadDate) / (1000 * 60 * 60 * 24));
+                    
+                    // 解析时长
+                    const [minutes, seconds] = duration.split(':').map(Number);
+                    const totalMinutes = minutes + seconds / 60;
+                    
+                    // 应用平台筛选
+                    const platformMatch = platformValue === 'all' || 
+                        (platformValue === 'bilibili' && platform.includes('b站')) ||
+                        (platformValue === 'youtube' && platform.includes('youtube'));
+                    
+                    // 应用时间筛选
+                    const timeMatch = timeValue === 'all' || 
+                        (timeValue === 'week' && daysDiff <= 7) ||
+                        (timeValue === 'month' && daysDiff <= 30) ||
+                        (timeValue === 'year' && daysDiff <= 365);
+                    
+                    // 应用时长筛选
+                    const durationMatch = durationValue === 'all' || 
+                        (durationValue === 'short' && totalMinutes < 5) ||
+                        (durationValue === 'medium' && totalMinutes >= 5 && totalMinutes <= 20) ||
+                        (durationValue === 'long' && totalMinutes > 20);
+                    
+                    // 只有都匹配才显示
+                    if (platformMatch && timeMatch && durationMatch) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // 重置分类过滤器
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                filterButtons[0].classList.add('active');
+            }
+            
+            platformFilter.addEventListener('change', applyAdvancedFilters);
+            timeFilter.addEventListener('change', applyAdvancedFilters);
+            durationFilter.addEventListener('change', applyAdvancedFilters);
+            
+            resetFiltersButton.addEventListener('click', function() {
+                // 重置筛选器值
+                platformFilter.value = 'all';
+                timeFilter.value = 'all';
+                durationFilter.value = 'all';
+                searchInput.value = '';
+                
+                // 显示所有视频卡片
+                videoCards.forEach(card => {
+                    card.style.display = 'block';
+                });
+                
+                // 重置分类过滤器
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                filterButtons[0].classList.add('active');
+            });
+            
+            // 视频播放弹窗
+            const videoPopup = document.getElementById('videoPopup');
+            const videoIframe = document.getElementById('videoIframe');
+            const popupClose = document.getElementById('popupClose');
+            const popupContent = document.querySelector('.popup-content');
+            
+            // 评分系统相关元素
+            const stars = document.querySelectorAll('.star');
+            const currentRating = document.getElementById('currentRating');
+            const submitRatingBtn = document.getElementById('submitRating');
+            let selectedRating = 0;
+            
+            // 评分星星交互
+            stars.forEach(star => {
+                // 鼠标悬停效果
+                star.addEventListener('mouseover', function() {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    highlightStars(rating);
+                });
+                
+                // 鼠标离开恢复
+                star.addEventListener('mouseout', function() {
+                    resetStars();
+                    if (selectedRating > 0) {
+                        highlightStars(selectedRating, true);
+                    }
+                });
+                
+                // 点击选择评分
+                star.addEventListener('click', function() {
+                    selectedRating = parseInt(this.getAttribute('data-rating'));
+                    resetStars();
+                    highlightStars(selectedRating, true);
+                    currentRating.textContent = selectedRating.toFixed(1);
+                });
+            });
+            
+            // 高亮星星函数
+            function highlightStars(count, isActive = false) {
+                stars.forEach(star => {
+                    const rating = parseInt(star.getAttribute('data-rating'));
+                    if (rating <= count) {
+                        if (isActive) {
+                            star.classList.add('active');
+                        } else {
+                            star.classList.add('hover');
+                        }
+                    }
+                });
+            }
+            
+            // 重置星星状态
+            function resetStars() {
+                stars.forEach(star => {
+                    star.classList.remove('hover');
+                    star.classList.remove('active');
+                });
+            }
+            
+            // 提交评分按钮
+            submitRatingBtn.addEventListener('click', function() {
+                if (selectedRating > 0) {
+                    alert(`感谢您的评分：${selectedRating}星！`);
+                    // 这里可以添加AJAX请求发送评分到服务器
+                } else {
+                    alert('请先选择星级评分！');
+                }
+            });
+            
+            // 视频分享功能
+            const shareVideoBtn = document.getElementById('shareVideo');
+            shareVideoBtn.addEventListener('click', function() {
+                const videoTitle = document.getElementById('popupVideoTitle').textContent;
+                const shareText = `我正在MC百科观看《${videoTitle}》，快来一起学习Minecraft吧！`;
+                
+                // 检查浏览器是否支持Web Share API
+                if (navigator.share) {
+                    navigator.share({
+                        title: videoTitle,
+                        text: shareText,
+                        url: window.location.href
+                    })
+                    .then(() => console.log('分享成功'))
+                    .catch((error) => console.log('分享失败', error));
+                } else {
+                    // 备用方案：复制分享文本到剪贴板
+                    const textArea = document.createElement('textarea');
+                    textArea.value = `${shareText} ${window.location.href}`;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('分享链接已复制到剪贴板！');
+                }
+            });
+            
+            // 收藏功能
+            const favoriteBtn = document.getElementById('addToFavorites');
+            favoriteBtn.addEventListener('click', function() {
+                const videoTitle = document.getElementById('popupVideoTitle').textContent;
+                // 使用localStorage存储收藏信息
+                let favorites = JSON.parse(localStorage.getItem('mc_wiki_favorites') || '[]');
+                const videoId = videoIframe.src.split('?')[0].split('/').pop();
+                
+                const isAlreadyFavorited = favorites.some(item => item.id === videoId);
+                
+                if (isAlreadyFavorited) {
+                    alert('该视频已经在您的收藏中！');
+                } else {
+                    favorites.push({
+                        id: videoId,
+                        title: videoTitle,
+                        platform: document.getElementById('popupPlatformName').textContent,
+                        date: new Date().toISOString()
+                    });
+                    localStorage.setItem('mc_wiki_favorites', JSON.stringify(favorites));
+                    alert('已添加到收藏！');
+                }
+            });
+            
+            // 下载按钮（模拟功能）
+            const downloadBtn = document.getElementById('downloadVideo');
+            downloadBtn.addEventListener('click', function() {
+                alert('由于版权原因，暂不支持直接下载视频。您可以访问原平台观看并下载。');
+            });
+            
+            // 给所有视频卡片（包括推荐区域）添加点击事件
+            const allVideoCards = document.querySelectorAll('.video-card');
+            
+            // 生成相关视频的数据
+            const mockRelatedVideos = [
+                {
+                    id: 'BV1pA4y1o7ZQ',
+                    title: '红石电梯设计详解',
+                    thumbnail: 'img/related-1.png',
+                    duration: '10:25',
+                    platform: 'bilibili'
+                },
+                {
+                    id: 'BV1vY411N7ZY',
+                    title: '生存模式建筑技巧',
+                    thumbnail: 'img/related-2.png',
+                    duration: '15:38',
+                    platform: 'bilibili'
+                },
+                {
+                    id: '5vc7zPFPnfc',
+                    title: '新手必看：矿物挖掘指南',
+                    thumbnail: 'img/related-3.png',
+                    duration: '8:17',
+                    platform: 'youtube'
+                },
+                {
+                    id: 'BV19S4y1E7TS',
+                    title: '探索地下遗迹攻略',
+                    thumbnail: 'img/related-4.png',
+                    duration: '12:05',
+                    platform: 'bilibili'
+                }
+            ];
+            
+            // 点击视频缩略图打开弹窗
+            allVideoCards.forEach(card => {
+                const thumbnailContainer = card.querySelector('.thumbnail-container');
+                thumbnailContainer.addEventListener('click', function() {
+                    const videoId = card.getAttribute('data-video-id');
+                    const videoTitle = card.querySelector('.video-title').textContent;
+                    const platform = card.querySelector('.platform-icon').alt;
+                    const uploadDate = card.querySelector('.upload-date').textContent;
+                    const views = card.querySelector('.video-views').textContent;
+                    const platformIcon = card.querySelector('.platform-icon').src;
+                    
+                    // 更新弹窗中的视频信息
+                    document.getElementById('popupVideoTitle').textContent = videoTitle;
+                    document.getElementById('popupPlatformIcon').src = platformIcon;
+                    document.getElementById('popupPlatformIcon').alt = platform;
+                    document.getElementById('popupPlatformName').textContent = platform === 'B站' ? '哔哩哔哩' : 'YouTube';
+                    document.getElementById('popupUploadDate').textContent = uploadDate;
+                    document.getElementById('popupViews').textContent = views;
+                    
+                    // 重置评分状态
+                    resetStars();
+                    selectedRating = 0;
+                    currentRating.textContent = '4.7'; // 默认评分
+                    
+                    // 先显示弹窗，再加载视频，避免因iframe加载延迟导致布局问题
+                    videoPopup.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                    
+                    // 添加加载动画
+                    const loadingDiv = document.createElement('div');
+                    loadingDiv.className = 'video-loading';
+                    loadingDiv.innerHTML = '<div class="loading-spinner"></div>';
+                    
+                    const iframeContainer = document.querySelector('.video-iframe-container');
+                    iframeContainer.appendChild(loadingDiv);
+                    
+                    // 延迟50毫秒加载视频，确保DOM已更新
+                    setTimeout(() => {
+                        // 根据平台设置不同的嵌入链接
+                        if (platform === 'B站') {
+                            videoIframe.src = `https://player.bilibili.com/player.html?bvid=${videoId}&page=1&high_quality=1&autoplay=0`;
+                        } else if (platform === 'YouTube') {
+                            videoIframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0`;
+                        }
+                        
+                        // 视频加载完成后移除加载动画
+                        videoIframe.onload = function() {
+                            setTimeout(() => {
+                                if (loadingDiv && loadingDiv.parentNode) {
+                                    loadingDiv.remove();
+                                }
+                            }, 500);
+                        };
+                        
+                        // 填充相关视频推荐
+                        populateRelatedVideos();
+                    }, 50);
+                });
+            });
+            
+            // 填充相关视频函数
+            function populateRelatedVideos() {
+                const relatedContainer = document.getElementById('relatedVideosContainer');
+                relatedContainer.innerHTML = ''; // 清空现有内容
+                
+                // 随机打乱相关视频顺序，增加推荐多样性
+                const shuffledVideos = [...mockRelatedVideos].sort(() => 0.5 - Math.random());
+                
+                shuffledVideos.forEach(video => {
+                    const videoCard = document.createElement('div');
+                    videoCard.className = 'related-video-card';
+                    videoCard.setAttribute('data-video-id', video.id);
+                    
+                    // 设置视频平台图标
+                    const platformIconSrc = video.platform === 'bilibili' ? 'img/icon-bilibili.png' : 'img/icon-youtube.png';
+                    const platformName = video.platform === 'bilibili' ? 'B站' : 'YouTube';
+                    
+                    videoCard.innerHTML = `
+                        <div class="related-thumbnail-container">
+                            <img src="${video.thumbnail}" alt="${video.title}" class="related-thumbnail">
+                            <div class="related-duration">${video.duration}</div>
+                        </div>
+                        <div class="related-info">
+                            <h5 class="related-title">${video.title}</h5>
+                            <div class="related-platform">
+                                <img src="${platformIconSrc}" alt="${platformName}" class="related-platform-icon">
+                                <span>${video.platform === 'bilibili' ? '哔哩哔哩' : 'YouTube'}</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // 点击相关视频切换到该视频
+                    videoCard.addEventListener('click', function() {
+                        const videoId = this.getAttribute('data-video-id');
+                        const title = this.querySelector('.related-title').textContent;
+                        const platform = this.querySelector('.related-platform span').textContent;
+                        const platformIcon = this.querySelector('.related-platform-icon').src;
+                        
+                        // 更新视频信息
+                        document.getElementById('popupVideoTitle').textContent = title;
+                        document.getElementById('popupPlatformIcon').src = platformIcon;
+                        document.getElementById('popupPlatformIcon').alt = platform;
+                        document.getElementById('popupPlatformName').textContent = platform;
+                        
+                        // 根据平台设置嵌入链接
+                        if (platform === '哔哩哔哩') {
+                            videoIframe.src = `https://player.bilibili.com/player.html?bvid=${videoId}&page=1&high_quality=1&autoplay=0`;
+                        } else {
+                            videoIframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0`;
+                        }
+                        
+                        // 添加加载动画
+                        const loadingDiv = document.createElement('div');
+                        loadingDiv.className = 'video-loading';
+                        loadingDiv.innerHTML = '<div class="loading-spinner"></div>';
+                        
+                        const iframeContainer = document.querySelector('.video-iframe-container');
+                        iframeContainer.appendChild(loadingDiv);
+                        
+                        // 视频加载完成后移除加载动画
+                        videoIframe.onload = function() {
+                            setTimeout(() => {
+                                loadingDiv.remove();
+                            }, 500);
+                        };
+                        
+                        // 重新生成相关视频（除了当前视频）
+                        populateRelatedVideos();
+                        
+                        // 滚动到顶部
+                        popupContent.scrollTop = 0;
+                    });
+                    
+                    relatedContainer.appendChild(videoCard);
+                });
+            }
+            
+            // 关闭弹窗
+            popupClose.addEventListener('click', function() {
+                popupContent.classList.add('popup-closing');
+                setTimeout(() => {
+                    videoPopup.style.display = 'none';
+                    videoIframe.src = ''; // 停止视频播放
+                    document.body.style.overflow = 'auto'; // 恢复页面滚动
+                    popupContent.classList.remove('popup-closing');
+                }, 400);
+            });
+            
+            // 点击弹窗外部关闭弹窗
+            videoPopup.addEventListener('click', function(e) {
+                if (e.target === videoPopup) {
+                    popupContent.classList.add('popup-closing');
+                    setTimeout(() => {
+                        videoPopup.style.display = 'none';
+                        videoIframe.src = '';
+                        document.body.style.overflow = 'auto';
+                        popupContent.classList.remove('popup-closing');
+                    }, 400);
+                }
+            });
+            
+            // ESC键关闭弹窗
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && videoPopup.style.display === 'flex') {
+                    popupContent.classList.add('popup-closing');
+                    setTimeout(() => {
+                        videoPopup.style.display = 'none';
+                        videoIframe.src = '';
+                        document.body.style.overflow = 'auto';
+                        popupContent.classList.remove('popup-closing');
+                    }, 400);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

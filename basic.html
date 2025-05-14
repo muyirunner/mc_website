@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新手入门 - MC百科</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 引入像素风格字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- 引入AOS动画库 -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <!-- 引入动画库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        /* 页面特定样式 */
+        /* 自定义滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(58, 58, 58, 0.1);
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #8dc63f, #5d8a2a);
+            border-radius: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background-clip: padding-box;
+            transition: all 0.3s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #74a534, #4a6f22);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 滚动进度指示器 */
+        .scroll-progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #8dc63f, #5d8a2a);
+            z-index: 1001;
+            transition: width 0.1s ease;
+        }
+
+        /* 滚动动画增强 */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            position: relative;
+        }
+
+        /* 装饰元素 */
+        .floating-element {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.8;
+            transition: transform 0.5s ease;
+            image-rendering: pixelated;
+            animation: float 6s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        /* 像素风格的粒子背景 */
+        .pixel-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2e7d32;
+            font-size: 2rem;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #8dc63f, transparent);
+            transition: width 1.5s ease;
+        }
+
+        .page-title.animate-line::after {
+            width: 150px;
+        }
+
+        /* 增加页面内容标记点 */
+        .section-indicator {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 90;
+        }
+
+        .section-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(141, 198, 63, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .section-dot.active {
+            background-color: #8dc63f;
+            transform: scale(1.2);
+        }
+
+        .section-dot:hover {
+            background-color: #74a534;
+            transform: scale(1.2);
+        }
+
+        .section-dot::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            font-size: 0.7rem;
+            padding: 5px 10px;
+            border-radius: 4px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .section-dot:hover::after {
+            opacity: 1;
+            visibility: visible;
+            right: 25px;
+        }
+
+        /* 链接悬停效果 */
+        a {
+            position: relative;
+            text-decoration: none;
+        }
+
+        a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #8dc63f;
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease;
+        }
+
+        a:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        /* 改进内容卡片阴影效果 */
+        .content-card {
+            background-color: white;
+            border: 4px solid #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                box-shadow 0.4s ease,
+                border-color 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #8dc63f, #5d8a2a);
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .content-card:hover::before {
+            transform: translateY(0);
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(141, 198, 63, 0.2);
+            border-color: #8dc63f;
+        }
+
+        /* 增强3D卡片效果 */
+        .card-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 2rem;
+            perspective: 1000px;
+        }
+
+        /* 视差滚动效果 */
+        .parallax-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-image: url('img/pixel-bg.png');
+            background-size: 200px;
+            background-repeat: repeat;
+            opacity: 0.03;
+            z-index: -1;
+            transform: translateZ(-10px) scale(1.5);
+        }
+
+        /* 读取进度动画 */
+        .reading-progress {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 90;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .reading-progress.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .reading-progress-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .reading-progress::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: #8dc63f;
+            animation: spin 1.5s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 其余样式保持不变... */
+        .content-card h2 {
+            color: #2e7d32;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #8dc63f;
+            padding-bottom: 0.5rem;
+            font-size: 1.8rem;
+            display: inline-block;
+            position: relative;
+        }
+
+        .content-card h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #2e7d32;
+            transition: width 0.6s ease;
+        }
+
+        .content-card:hover h2::after {
+            width: 100%;
+        }
+
+        .card-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .card-image {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+            perspective: 1000px;
+        }
+
+        .card-image img {
+            max-width: 100%;
+            height: auto;
+            border: 3px solid #8dc63f;
+            border-radius: 8px;
+            image-rendering: pixelated;
+            transition: transform 0.6s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .card-image img:hover {
+            transform: scale(1.05) rotateY(5deg);
+            border-color: #74a534;
+            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-image p {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .card-image:hover p {
+            color: #2e7d32;
+        }
+
+        .tip-box {
+            background-color: rgba(141, 198, 63, 0.2);
+            border-left: 4px solid #8dc63f;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tip-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .tip-box:hover::before {
+            transform: translateX(100%);
+        }
+
+        .tip-box:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(141, 198, 63, 0.3);
+        }
+
+        .tip-icon {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated;
+            margin-top: 2px;
+            transition: transform 0.3s ease;
+        }
+
+        .tip-box:hover .tip-icon {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .key-box {
+            display: inline-block;
+            background-color: #fff;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            padding: 0.2rem 0.5rem;
+            margin: 0 0.2rem;
+            font-family: monospace;
+            font-weight: bold;
+            box-shadow: 0 2px 0 #ccc, inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: relative;
+            top: 0;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .key-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 0 #ccc, inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-color: #8dc63f;
+        }
+
+        .key-box:active,
+        .key-box.pressed {
+            top: 2px;
+            box-shadow: 0 0 0 #ccc, inset 0 1px 5px rgba(0, 0, 0, 0.2);
+            transform: translateY(0);
+        }
+
+        .custom-back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            transform: translateY(20px);
+        }
+
+        .custom-back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .custom-back-to-top img {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(141, 198, 63, 0.8);
+            padding: 8px;
+            border-radius: 50%;
+            border: 2px solid #5a8017;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            image-rendering: pixelated;
+        }
+
+        .custom-back-to-top:hover img {
+            background-color: #8dc63f;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            animation: bounce 2s infinite;
+            image-rendering: pixelated;
+            opacity: 0.8;
+            transition: opacity 0.3s, transform 0.3s ease;
+            z-index: 3;
+        }
+
+        .scroll-indicator:hover {
+            opacity: 1;
+            transform: translateX(-50%) scale(1.2);
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+
+        .banner {
+            position: relative;
+            width: 100%;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .banner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .banner-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            image-rendering: pixelated;
+            transition: transform 15s ease;
+        }
+
+        .banner:hover .banner-img {
+            transform: scale(1.1);
+        }
+
+        .banner-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 1.5rem;
+            border: 4px solid #8dc63f;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 2;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .banner:hover .banner-text {
+            background-color: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 20px rgba(141, 198, 63, 0.5), 0 0 40px rgba(141, 198, 63, 0.3);
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        .banner-text h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .banner-text p {
+            font-size: 0.9rem;
+            text-shadow: 1px 1px 0 #000;
+        }
+
+        /* 交互式进度指示器 */
+        .progress-tracker {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            position: relative;
+            z-index: 5;
+        }
+
+        .progress-tracker::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: #ddd;
+            transform: translateY(-50%);
+            z-index: -1;
+        }
+
+        .progress-step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 3px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .progress-step::after {
+            content: attr(data-label);
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 0.7rem;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .progress-step:hover,
+        .progress-step.active {
+            border-color: #8dc63f;
+            color: #2e7d32;
+            transform: scale(1.1);
+        }
+
+        .progress-step:hover::after,
+        .progress-step.active::after {
+            color: #2e7d32;
+        }
+
+        /* 交互式分类标签 */
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .category-tab {
+            padding: 0.5rem 1rem;
+            background-color: #fff;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .category-tab:hover,
+        .category-tab.active {
+            background-color: #8dc63f;
+            color: white;
+            border-color: #5d8a2a;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .card-content {
+                flex-direction: column;
+            }
+
+            .card-image {
+                order: -1;
+                /* 在移动设备上图片显示在文字上方 */
+            }
+
+            .progress-tracker {
+                overflow-x: auto;
+                padding-bottom: 2rem;
+            }
+
+            .progress-step {
+                min-width: 40px;
+                margin-right: 2rem;
+            }
+
+            .section-indicator {
+                display: none;
+                /* 在移动设备上隐藏 */
+            }
+        }
+
+        /* 新增的平滑滚动效果 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* 页面切换淡入效果 */
+        body {
+            animation: pageLoad 0.8s ease-in-out;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 滚动进度条 -->
+    <div class="scroll-progress-bar" id="scrollProgressBar"></div>
+
+    <!-- 页面阅读进度指示器 -->
+    <div class="reading-progress" id="readingProgress">
+        <div class="reading-progress-circle">0%</div>
+    </div>
+
+    <!-- 章节指示器 -->
+    <div class="section-indicator" id="sectionIndicator">
+        <div class="section-dot" data-tooltip="基础操作" data-target="basics"></div>
+        <div class="section-dot" data-tooltip="生存技巧" data-target="survival"></div>
+        <div class="section-dot" data-tooltip="界面说明" data-target="interface"></div>
+    </div>
+
+    <!-- 像素风格粒子背景 -->
+    <div class="pixel-particles" id="pixelParticles"></div>
+
+    <!-- 视差背景 -->
+    <div class="parallax-bg" id="parallaxBg"></div>
+
+    <!-- 装饰元素 -->
+    <img src="img/像素木镐图标.png" alt="装饰" class="floating-element" style="top: 20%; left: 5%; width: 40px;">
+    <img src="img/翻开的书.png" alt="装饰" class="floating-element" style="top: 60%; right: 8%; width: 35px;">
+    <img src="img/放大镜.png" alt="装饰" class="floating-element" style="top: 30%; right: 15%; width: 30px;">
+
+    <header>
+        <div class="logo-container">
+            <img src="img/MC百科像素风Logo.png" alt="MC百科Logo" class="logo">
+            <h1 class="logo-3d">MC百科</h1>
+        </div>
+        <div class="menu-toggle" onclick="toggleMobileMenu()"></div>
+        <nav>
+            <ul id="navMenu">
+                <li style="--item-index: 0"><a href="index.html">首页</a></li>
+                <li style="--item-index: 1"><a href="basic.html" class="active">新手入门</a></li>
+                <li style="--item-index: 2"><a href="advanced.html">进阶技巧</a></li>
+                <li style="--item-index: 3"><a href="mod.html">模组介绍</a></li>
+                <li style="--item-index: 4"><a href="video.html">视频推荐</a></li>
+                <li style="--item-index: 5"><a href="share.html">玩家心得</a></li>
+                <li style="--item-index: 6"><a href="search.html">资源搜索</a></li>
+                <li style="--item-index: 7"><a href="game.html">生物图鉴</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="banner">
+        <img src="img/basic-move.png" alt="新手入门" class="banner-img">
+        <div class="banner-text">
+            <h2 class="animate__animated animate__fadeInDown animate__delay-1s">新手入门指南</h2>
+            <p class="animate__animated animate__fadeInUp animate__delay-1s">开始你的Minecraft旅程，探索无限可能</p>
+        </div>
+        <img src="img/像素下箭头.png" alt="向下滚动" class="scroll-indicator" onclick="scrollToMainContent()">
+    </div>
+
+    <main>
+        <div class="content-section">
+            <h1 class="page-title">我的世界新手入门指南</h1>
+
+            <!-- 交互式分类标签 -->
+            <div class="category-tabs">
+                <div class="category-tab active" data-category="all">全部</div>
+                <div class="category-tab" data-category="controls">操作控制</div>
+                <div class="category-tab" data-category="survival">生存技巧</div>
+                <div class="category-tab" data-category="interface">界面设置</div>
+            </div>
+
+            <!-- 交互式进度指示器 -->
+            <div class="progress-tracker">
+                <div class="progress-step active" data-target="basics" data-label="基础操作">1</div>
+                <div class="progress-step" data-target="survival" data-label="生存技巧">2</div>
+                <div class="progress-step" data-target="interface" data-label="界面说明">3</div>
+            </div>
+
+            <section id="basics" class="content-card" data-aos="fade-up" data-aos-duration="600"
+                data-category="controls">
+                <h2>基础操作</h2>
+                <div class="card-content">
+                    <div class="card-text">
+                        <p>在《我的世界》中，掌握基础操作是你探索这个无限世界的第一步。游戏采用经典的第一人称操作方式，让你可以自由地在方块世界中行走、建造和冒险。</p>
+
+                        <h3>移动控制:</h3>
+                        <p>使用 <span class="key-box" data-key="W">W</span><span class="key-box"
+                                data-key="A">A</span><span class="key-box" data-key="S">S</span><span class="key-box"
+                                data-key="D">D</span> 键控制角色移动方向，<span class="key-box" data-key="Space">空格键</span>
+                            用于跳跃，<span class="key-box" data-key="Shift">Shift</span>
+                            键用于下蹲/潜行（防止从边缘掉落）。视角控制则通过鼠标完成，移动鼠标即可转动视角。</p>
+
+                        <h3>方块交互:</h3>
+                        <p><span class="key-box" data-key="LMB">鼠标左键</span>
+                            用于破坏方块，需要持续点击直到方块被完全破坏。不同材质的方块需要不同的工具和时间来破坏。<span class="key-box" data-key="RMB">鼠标右键</span>
+                            用于放置方块、使用物品或与环境互动（如开门、使用工作台等）。</p>
+
+                        <h3>物品合成:</h3>
+                        <p>合成是《我的世界》最核心的玩法之一。初始阶段，你需要:</p>
+                        <ol>
+                            <li>用手挖树木获取原木</li>
+                            <li>将原木放入物品栏的2×2合成格转化为木板</li>
+                            <li>用木板制作工作台（2×2格放入4个木板）</li>
+                            <li>放置工作台后右键点击，打开3×3合成界面</li>
+                            <li>在工作台上制作各种工具（如木镐、木斧等）</li>
+                        </ol>
+
+                        <div class="tip-box">
+                            <img src="img/tip-icon.png" class="tip-icon" alt="提示图标">
+                            <p><strong>小提示：</strong> 按 <span class="key-box" data-key="E">E</span> 键打开物品栏，按 <span
+                                    class="key-box" data-key="Q">Q</span> 键丢弃手中物品。合成配方可以通过按 <span class="key-box"
+                                    data-key="Shift">Shift</span>
+                                键快速将物品移入物品栏或箱子。</p>
+                        </div>
+                    </div>
+                    <div class="card-image">
+                        <img src="img/basic-move.png" alt="基础移动控制" class="interactive-img">
+                        <p>基础移动控制与视角</p>
+                        <img src="img/basic-craft.png" alt="物品合成界面" class="interactive-img" style="margin-top: 1rem;">
+                        <p>工作台合成界面</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="survival" class="content-card" data-aos="fade-up" data-aos-duration="600"
+                data-category="survival">
+                <h2>生存技巧</h2>
+                <div class="card-content">
+                    <div class="card-text">
+                        <p>《我的世界》的生存模式充满挑战，特别是对新手玩家来说。以下是一些帮助你度过游戏初期的关键技巧：</p>
+
+                        <h3>第一天的任务:</h3>
+                        <p>游戏中的一天约为10分钟，夜晚会出现敌对生物。在第一个白天，你应该:</p>
+                        <ul class="checklist">
+                            <li class="checkable"><span class="checkbox"></span>收集木材（至少获取16-20个原木）</li>
+                            <li class="checkable"><span class="checkbox"></span>制作基础工具：木镐、木斧、木锹</li>
+                            <li class="checkable"><span class="checkbox"></span>寻找煤炭或烧制木炭（原木+熔炉）</li>
+                            <li class="checkable"><span class="checkbox"></span>准备建造简易庇护所的材料</li>
+                            <li class="checkable"><span class="checkbox"></span>如果可能，寻找并剪三只羊获得羊毛来制作床</li>
+                        </ul>
+
+                        <h3>第一晚的庇护:</h3>
+                        <p>夜晚降临前，你需要一个安全的庇护所。这可以是:</p>
+                        <ul>
+                            <li>在山壁上挖出的小洞</li>
+                            <li>用木板和泥土搭建的简易小屋</li>
+                            <li>改造的村庄房屋</li>
+                        </ul>
+                        <p>记住放置足够的火把（煤炭/木炭+木棍）照亮庇护所，因为怪物会在光照等级低的区域生成。</p>
+
+                        <h3>食物与生存:</h3>
+                        <p>饥饿会影响你的生命恢复和奔跑能力。初期获取食物的方法:</p>
+                        <ul>
+                            <li>杀死动物获得肉类（猪、牛、羊、鸡）</li>
+                            <li>采集苹果（从橡树叶有小概率掉落）</li>
+                            <li>收集小麦、胡萝卜或土豆种植</li>
+                        </ul>
+
+                        <div class="tip-box">
+                            <img src="img/tip-icon.png" class="tip-icon" alt="提示图标">
+                            <p><strong>生存小窍门：</strong> 如果无法找到足够的羊毛制作床，可以在庇护所内的角落挖一个深3格的洞并站在里面等待天亮。怪物需要至少2格高的空间才能生成。</p>
+                        </div>
+                    </div>
+                    <div class="card-image">
+                        <img src="img/survival-night.png" alt="第一晚的庇护所" class="interactive-img">
+                        <p>安全的第一晚庇护所</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="interface" class="content-card" data-aos="fade-up" data-aos-duration="600"
+                data-category="interface">
+                <h2>界面说明</h2>
+                <div class="card-content">
+                    <div class="card-text">
+                        <p>《我的世界》的用户界面简洁而实用，了解各界面元素对新手玩家尤为重要。以下是主要界面元素的说明：</p>
+
+                        <div class="interactive-interface">
+                            <div class="interface-element" data-target="health" style="top: 10%; left: 10%;">
+                                <span class="dot"></span>
+                                <div class="info-popup">
+                                    <h4>生命值</h4>
+                                    <p>显示为一排红心，每颗心代表2点生命值。</p>
+                                </div>
+                            </div>
+                            <div class="interface-element" data-target="hunger" style="top: 10%; left: 60%;">
+                                <span class="dot"></span>
+                                <div class="info-popup">
+                                    <h4>饥饿度</h4>
+                                    <p>显示为肉排图标，影响生命恢复和奔跑能力。</p>
+                                </div>
+                            </div>
+                            <div class="interface-element" data-target="exp" style="top: 40%; left: 30%;">
+                                <span class="dot"></span>
+                                <div class="info-popup">
+                                    <h4>经验条</h4>
+                                    <p>绿色条代表经验值，用于附魔和铁砧。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3>生命值（红心）:</h3>
+                        <p>位于屏幕底部，显示为一排红心。每颗完整的心代表2点生命值，玩家默认拥有10颗心（20点生命值）。受到伤害时心会减少，可通过食用食物、使用药水或自然恢复来补充。</p>
+
+                        <h3>饥饿值（食物图标）:</h3>
+                        <p>位于生命值右侧，显示为肉排图标。满饥饿度时可以自动恢复生命值。饥饿度低于3格时无法奔跑，为零时会逐渐损失生命值。</p>
+
+                        <h3>经验条（绿色条）:</h3>
+                        <p>屏幕底部的绿色条代表经验值，通过采矿、战斗、繁殖动物等活动获得。累积足够经验后可升级（显示为经验条上的数字），用于附魔装备和工具。</p>
+
+                        <h3>热键栏（物品槽）:</h3>
+                        <p>屏幕底部中央的9个物品槽是热键栏，可以使用数字键1-9快速切换。当前选中的物品槽会高亮显示。</p>
+
+                        <h3>其他重要界面:</h3>
+                        <ul>
+                            <li><strong>物品栏(E键)</strong>：查看所有携带的物品</li>
+                            <li><strong>合成界面</strong>：用于制作物品</li>
+                            <li><strong>箱子界面</strong>：存储物品</li>
+                            <li><strong>熔炉界面</strong>：冶炼矿物和烹饪食物</li>
+                        </ul>
+
+                        <div class="tip-box">
+                            <img src="img/tip-icon.png" class="tip-icon" alt="提示图标">
+                            <p><strong>界面技巧：</strong> 按<span class="key-box"
+                                    data-key="F1">F1</span>可隐藏所有界面元素，获得沉浸式游戏体验。按<span class="key-box"
+                                    data-key="F3">F3</span>可打开调试信息，显示坐标、方向等技术数据，对导航和挖矿非常有用。</p>
+                        </div>
+                    </div>
+                    <div class="card-image">
+                        <img src="img/gui-explained.png" alt="游戏界面说明" class="interactive-img interface-map">
+                        <p>《我的世界》游戏界面元素说明</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 MC百科. 保留所有权利。作者：杨汶川</p>
+            <p>本网站仅用于学习和分享，与Mojang和Microsoft没有官方关联。</p>
+            <p>联系方式：13325766744 | 邮箱：641339238@qq.com</p>
+        </div>
+    </footer>
+
+    <div class="custom-back-to-top" id="backToTop">
+        <a href="#"><img src="img/像素上箭头.png" alt="返回顶部" class="animate__animated animate__pulse animate__infinite"></a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // 初始化AOS动画库
+        document.addEventListener('DOMContentLoaded', function () {
+            // 初始化AOS
+            AOS.init({
+                once: true, // 动画只触发一次
+                offset: 120, // 触发动画的偏移量
+                duration: 800 // 默认动画持续时间
+            });
+
+            // 页面标题动画
+            setTimeout(() => {
+                document.querySelector('.page-title').classList.add('animate-line');
+            }, 500);
+
+            // 为所有按键添加按下效果
+            const keyBoxes = document.querySelectorAll('.key-box');
+            keyBoxes.forEach(key => {
+                key.addEventListener('mousedown', function () {
+                    this.classList.add('pressed');
+                    playKeySound(this.getAttribute('data-key'));
+                });
+                key.addEventListener('mouseup', function () {
+                    this.classList.remove('pressed');
+                });
+                key.addEventListener('mouseleave', function () {
+                    this.classList.remove('pressed');
+                });
+            });
+
+            // 播放按键音效
+            function playKeySound(key) {
+                // 这里可以添加实际的音效播放代码
+                console.log('按下了按键:', key);
+            }
+
+            // 返回顶部按钮脚本
+            const backToTopButton = document.getElementById('backToTop');
+
+            // 监听滚动事件
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+            });
+
+            // 点击返回顶部
+            backToTopButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // 创建像素粒子效果
+            createPixelParticles();
+
+            // 可勾选的清单功能
+            setupChecklistFunctionality();
+
+            // 设置进度步骤交互
+            setupProgressSteps();
+
+            // 设置分类标签交互
+            setupCategoryTabs();
+
+            // 设置交互式图片
+            setupInteractiveImages();
+
+            // 设置界面交互元素
+            setupInterfaceElements();
+
+            // 设置滚动进度条
+            setupScrollProgressBar();
+
+            // 设置滚动动画
+            setupScrollRevealElements();
+
+            // 设置章节指示器
+            setupSectionIndicator();
+
+            // 设置视差滚动
+            setupParallaxEffect();
+
+            // 设置阅读进度指示器
+            setupReadingProgress();
+        });
+
+        // 滚动到主内容区域
+        function scrollToMainContent() {
+            const mainContent = document.querySelector('.content-section');
+            if (mainContent) {
+                mainContent.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+
+        // 创建像素风格的粒子效果
+        function createPixelParticles() {
+            const container = document.getElementById('pixelParticles');
+            if (!container) return;
+
+            const colors = ['#8dc63f', '#5d8a2a', '#3a3a3a', '#666666'];
+            const particleCount = 20; // 减少数量以减轻性能负担
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = Math.floor(Math.random() * 6 + 3) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.opacity = Math.random() * 0.3 + 0.1;
+                particle.style.pointerEvents = 'none';
+
+                // 设置动画
+                const duration = Math.random() * 50 + 30;
+                const delay = Math.random() * 5;
+
+                particle.style.animation = `floatParticle ${duration}s linear ${delay}s infinite`;
+                container.appendChild(particle);
+            }
+
+            // 添加动画关键帧
+            if (!document.getElementById('particleKeyframes')) {
+                const style = document.createElement('style');
+                style.id = 'particleKeyframes';
+                style.innerHTML = `
+                    @keyframes floatParticle {
+                        0% { transform: translateY(0) rotate(0deg); }
+                        100% { transform: translateY(-100vh) rotate(360deg); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // 设置可勾选列表功能
+        function setupChecklistFunctionality() {
+            const checkableItems = document.querySelectorAll('.checkable');
+
+            checkableItems.forEach(item => {
+                const checkbox = item.querySelector('.checkbox');
+
+                item.addEventListener('click', function () {
+                    this.classList.toggle('checked');
+                    if (this.classList.contains('checked')) {
+                        // 保存到本地存储
+                        localStorage.setItem(this.textContent.trim(), 'checked');
+                    } else {
+                        localStorage.removeItem(this.textContent.trim());
+                    }
+                });
+
+                // 从本地存储加载状态
+                if (localStorage.getItem(item.textContent.trim()) === 'checked') {
+                    item.classList.add('checked');
+                }
+            });
+
+            // 添加样式
+            const style = document.createElement('style');
+            style.textContent = `
+                .checklist {
+                    list-style: none;
+                    padding-left: 0;
+                }
+                .checkable {
+                    margin: 8px 0;
+                    padding: 5px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    transition: all 0.3s ease;
+                }
+                .checkable:hover {
+                    background-color: rgba(141, 198, 63, 0.1);
+                }
+                .checkbox {
+                    display: inline-block;
+                    width: 18px;
+                    height: 18px;
+                    border: 2px solid #8dc63f;
+                    border-radius: 3px;
+                    margin-right: 10px;
+                    position: relative;
+                    transition: all 0.2s ease;
+                }
+                .checked .checkbox::after {
+                    content: '';
+                    position: absolute;
+                    top: 2px;
+                    left: 6px;
+                    width: 5px;
+                    height: 10px;
+                    border-right: 2px solid #2e7d32;
+                    border-bottom: 2px solid #2e7d32;
+                    transform: rotate(45deg);
+                }
+                .checked {
+                    text-decoration: line-through;
+                    color: #999;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // 设置进度步骤交互
+        function setupProgressSteps() {
+            const progressSteps = document.querySelectorAll('.progress-step');
+
+            progressSteps.forEach(step => {
+                step.addEventListener('click', function () {
+                    // 移除所有步骤的激活状态
+                    progressSteps.forEach(s => s.classList.remove('active'));
+
+                    // 添加当前步骤的激活状态
+                    this.classList.add('active');
+
+                    // 滚动到目标内容
+                    const targetId = this.getAttribute('data-target');
+                    const targetElement = document.getElementById(targetId);
+
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        }
+
+        // 设置分类标签交互
+        function setupCategoryTabs() {
+            const categoryTabs = document.querySelectorAll('.category-tab');
+            const contentCards = document.querySelectorAll('.content-card');
+
+            categoryTabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    // 移除所有标签的激活状态
+                    categoryTabs.forEach(t => t.classList.remove('active'));
+
+                    // 添加当前标签的激活状态
+                    this.classList.add('active');
+
+                    const category = this.getAttribute('data-category');
+
+                    // 显示/隐藏相应内容
+                    contentCards.forEach(card => {
+                        if (category === 'all' || card.getAttribute('data-category') === category) {
+                            card.style.display = 'block';
+                            // 重新触发AOS动画
+                            setTimeout(() => {
+                                AOS.refresh();
+                            }, 100);
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        }
+
+        // 设置交互式图片
+        function setupInteractiveImages() {
+            const interactiveImages = document.querySelectorAll('.interactive-img');
+
+            interactiveImages.forEach(img => {
+                img.addEventListener('mouseenter', function () {
+                    this.style.transform = 'scale(1.05) rotateY(5deg)';
+                    this.style.boxShadow = '10px 10px 20px rgba(0, 0, 0, 0.2)';
+                });
+
+                img.addEventListener('mouseleave', function () {
+                    this.style.transform = '';
+                    this.style.boxShadow = '';
+                });
+
+                // 添加点击放大功能
+                img.addEventListener('click', function () {
+                    createLightbox(this.src, this.alt);
+                });
+            });
+
+            // 创建图片灯箱
+            function createLightbox(src, alt) {
+                // 创建灯箱元素
+                const lightbox = document.createElement('div');
+                lightbox.className = 'lightbox';
+                lightbox.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.8);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1000;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                `;
+
+                // 创建图片容器
+                const imgContainer = document.createElement('div');
+                imgContainer.style.cssText = `
+                    max-width: 90%;
+                    max-height: 90%;
+                    transform: scale(0.9);
+                    transition: transform 0.3s ease;
+                `;
+
+                // 创建图片元素
+                const imgElement = document.createElement('img');
+                imgElement.src = src;
+                imgElement.alt = alt;
+                imgElement.style.cssText = `
+                    max-width: 100%;
+                    max-height: 80vh;
+                    border: 4px solid #8dc63f;
+                    border-radius: 8px;
+                    image-rendering: pixelated;
+                `;
+
+                // 创建标题
+                const caption = document.createElement('div');
+                caption.textContent = alt;
+                caption.style.cssText = `
+                    color: white;
+                    text-align: center;
+                    margin-top: 10px;
+                    padding: 5px;
+                `;
+
+                // 组装灯箱
+                imgContainer.appendChild(imgElement);
+                imgContainer.appendChild(caption);
+                lightbox.appendChild(imgContainer);
+                document.body.appendChild(lightbox);
+
+                // 触发动画
+                setTimeout(() => {
+                    lightbox.style.opacity = '1';
+                    imgContainer.style.transform = 'scale(1)';
+                }, 10);
+
+                // 点击关闭灯箱
+                lightbox.addEventListener('click', function () {
+                    this.style.opacity = '0';
+                    imgContainer.style.transform = 'scale(0.9)';
+                    setTimeout(() => {
+                        document.body.removeChild(this);
+                    }, 300);
+                });
+            }
+        }
+
+        // 设置界面交互元素
+        function setupInterfaceElements() {
+            const interfaceElements = document.querySelectorAll('.interface-element');
+
+            // 添加样式
+            const style = document.createElement('style');
+            style.textContent = `
+                .interactive-interface {
+                    position: relative;
+                    height: 150px;
+                    background-color: rgba(141, 198, 63, 0.1);
+                    border-radius: 8px;
+                    margin: 20px 0;
+                }
+                .interface-element {
+                    position: absolute;
+                    cursor: pointer;
+                }
+                .dot {
+                    display: block;
+                    width: 12px;
+                    height: 12px;
+                    background-color: #8dc63f;
+                    border-radius: 50%;
+                    box-shadow: 0 0 0 2px white, 0 0 0 4px rgba(141, 198, 63, 0.5);
+                    animation: pulse-dot 1.5s infinite;
+                }
+                @keyframes pulse-dot {
+                    0% { box-shadow: 0 0 0 0 white, 0 0 0 0 rgba(141, 198, 63, 0.7); }
+                    70% { box-shadow: 0 0 0 5px white, 0 0 0 7px rgba(141, 198, 63, 0); }
+                    100% { box-shadow: 0 0 0 0 white, 0 0 0 0 rgba(141, 198, 63, 0); }
+                }
+                .info-popup {
+                    position: absolute;
+                    top: 20px;
+                    left: 10px;
+                    min-width: 150px;
+                    background-color: white;
+                    border: 2px solid #8dc63f;
+                    border-radius: 8px;
+                    padding: 10px;
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                    opacity: 0;
+                    visibility: hidden;
+                    transform: translateY(10px);
+                    transition: all 0.3s ease;
+                    z-index: 100;
+                }
+                .info-popup h4 {
+                    margin: 0 0 5px 0;
+                    color: #2e7d32;
+                }
+                .info-popup p {
+                    margin: 0;
+                    font-size: 0.8rem;
+                }
+                .interface-element:hover .info-popup {
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translateY(0);
+                }
+            `;
+            document.head.appendChild(style);
+
+            // 设置界面地图交互
+            const interfaceMap = document.querySelector('.interface-map');
+            if (interfaceMap) {
+                interfaceMap.addEventListener('click', function (e) {
+                    // 计算点击位置相对于图片的百分比
+                    const rect = this.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+                    const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+
+                    console.log(`点击位置：左侧${x}%，顶部${y}%`);
+
+                    // 这里可以添加创建新标记点的代码
+                    // createNewInterfaceElement(x, y);
+                });
+            }
+        }
+
+        // 设置滚动进度条
+        function setupScrollProgressBar() {
+            const progressBar = document.getElementById('scrollProgressBar');
+            if (!progressBar) return;
+
+            window.addEventListener('scroll', function () {
+                const totalHeight = document.body.scrollHeight - window.innerHeight;
+                const progress = (window.scrollY / totalHeight) * 100;
+                progressBar.style.width = progress + '%';
+            });
+        }
+
+        // 设置滚动动画
+        function setupScrollRevealElements() {
+            // 添加滚动显示类
+            const elements = document.querySelectorAll('h2, h3, p, ul, ol, .tip-box, .card-image');
+            elements.forEach(el => {
+                if (!el.classList.contains('animate__animated')) {
+                    el.classList.add('scroll-reveal');
+                }
+            });
+
+            // 创建滚动观察器
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            // 观察所有元素
+            document.querySelectorAll('.scroll-reveal').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // 设置章节指示器
+        function setupSectionIndicator() {
+            const sectionDots = document.querySelectorAll('.section-dot');
+            const sections = document.querySelectorAll('section[id]');
+
+            if (sections.length === 0 || sectionDots.length === 0) return;
+
+            // 为每个点添加点击事件
+            sectionDots.forEach(dot => {
+                dot.addEventListener('click', function () {
+                    const targetId = this.getAttribute('data-target');
+                    const target = document.getElementById(targetId);
+
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // 监听滚动以更新活动状态
+            window.addEventListener('scroll', function () {
+                let currentSectionId = '';
+
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+
+                    if (pageYOffset >= (sectionTop - 200)) {
+                        currentSectionId = section.getAttribute('id');
+                    }
+                });
+
+                sectionDots.forEach(dot => {
+                    if (dot.getAttribute('data-target') === currentSectionId) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            });
+
+            // 初始化时触发一次滚动事件
+            window.dispatchEvent(new Event('scroll'));
+        }
+
+        // 设置视差滚动效果
+        function setupParallaxEffect() {
+            const parallaxBg = document.getElementById('parallaxBg');
+            if (!parallaxBg) return;
+
+            window.addEventListener('scroll', function () {
+                const scrollY = window.scrollY;
+                parallaxBg.style.transform = `translateY(${scrollY * 0.05}px)`;
+            });
+        }
+
+        // 设置阅读进度指示器
+        function setupReadingProgress() {
+            const readingProgress = document.getElementById('readingProgress');
+            const readingProgressCircle = readingProgress.querySelector('.reading-progress-circle');
+
+            if (!readingProgress || !readingProgressCircle) return;
+
+            // 显示阅读进度指示器
+            setTimeout(() => {
+                readingProgress.classList.add('visible');
+            }, 1000);
+
+            // 更新阅读进度
+            window.addEventListener('scroll', function () {
+                const totalHeight = document.body.scrollHeight - window.innerHeight;
+                const progress = Math.round((window.scrollY / totalHeight) * 100);
+                readingProgressCircle.textContent = progress + '%';
+
+                // 根据进度添加不同的颜色
+                if (progress > 75) {
+                    readingProgressCircle.style.color = '#2e7d32';
+                } else if (progress > 50) {
+                    readingProgressCircle.style.color = '#74a534';
+                } else if (progress > 25) {
+                    readingProgressCircle.style.color = '#8dc63f';
+                } else {
+                    readingProgressCircle.style.color = '#aaa';
+                }
+            });
+
+            // 初始化触发一次
+            window.dispatchEvent(new Event('scroll'));
+        }
+    </script>
+</body>
+
+</html>

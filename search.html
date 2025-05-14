@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资源搜索 - MC百科</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 引入像素风格字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* 搜索页面特定样式 */
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #2e7d32;
+            font-size: 2rem;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .page-intro {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        /* 搜索框区域 */
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            text-align: center;
+        }
+
+        .search-form {
+            display: flex;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 3px solid #8dc63f;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            border: none;
+            outline: none;
+        }
+
+        .search-btn {
+            background-color: #8dc63f;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-btn:hover {
+            background-color: #74a534;
+        }
+
+        .search-icon {
+            width: 30px;
+            height: 30px;
+        }
+
+        /* 热门关键词区域 */
+        .hot-keywords {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .keyword-tag {
+            position: relative;
+            background: url('img/keyword-tag.png') no-repeat center/contain;
+            padding: 0.7rem 1.5rem;
+            font-size: 1.1rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+            border: none;
+            outline: none;
+            min-width: 100px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .keyword-tag:hover {
+            transform: scale(1.1);
+        }
+
+        /* 搜索结果区域 */
+        .search-results {
+            margin-bottom: 4rem;
+        }
+
+        .results-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 3px dashed #8dc63f;
+        }
+
+        .results-title {
+            color: #2e7d32;
+            font-size: 1.6rem;
+        }
+
+        .results-count {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .result-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .result-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            border-color: #8dc63f;
+        }
+
+        .result-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            image-rendering: pixelated;
+            border-bottom: 3px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover .result-image {
+            border-color: #8dc63f;
+        }
+
+        .result-info {
+            padding: 1.5rem;
+        }
+
+        .result-title {
+            color: #2e7d32;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px dashed #8dc63f;
+            padding-bottom: 0.5rem;
+        }
+
+        .result-summary {
+            color: #555;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .view-details-btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: #8dc63f;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            border: 2px solid #5a8017;
+            font-weight: bold;
+        }
+
+        .view-details-btn:hover {
+            background-color: #74a534;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 空搜索结果 */
+        .empty-results {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .empty-image {
+            max-width: 200px;
+            margin-bottom: 1.5rem;
+            image-rendering: pixelated;
+        }
+
+        .empty-message {
+            color: #777;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-suggestion {
+            color: #999;
+            font-size: 1rem;
+        }
+
+        /* 返回顶部按钮 */
+        .custom-back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            transform: translateY(20px);
+        }
+
+        .custom-back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .custom-back-to-top img {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(141, 198, 63, 0.8);
+            padding: 8px;
+            border-radius: 50%;
+            border: 2px solid #5a8017;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .custom-back-to-top:hover img {
+            background-color: #8dc63f;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .result-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-btn {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="img/MC百科像素风Logo.png" alt="MC百科Logo" class="logo">
+            <h1>MC百科</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="basic.html">新手入门</a></li>
+                <li><a href="advanced.html">进阶技巧</a></li>
+                <li><a href="mod.html">模组介绍</a></li>
+                <li><a href="video.html">视频推荐</a></li>
+                <li><a href="share.html">玩家心得</a></li>
+                <li><a href="search.html" class="active">资源搜索</a></li>
+                <li><a href="game.html">生物图鉴</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="content-section">
+            <h1 class="page-title">Minecraft 资源搜索</h1>
+            <p class="page-intro">在这里搜索你需要的Minecraft攻略、教程、MOD信息和玩家分享</p>
+
+            <!-- 搜索框区域 -->
+            <div class="search-container">
+                <form class="search-form" id="searchForm">
+                    <input type="text" class="search-input" id="searchInput" placeholder="输入关键词搜索资源..." required>
+                    <button type="submit" class="search-btn">
+                        <img src="img/search-icon.png" alt="搜索" class="search-icon">
+                    </button>
+                </form>
+
+                <div class="hot-keywords">
+                    <button class="keyword-tag" data-keyword="红石">红石</button>
+                    <button class="keyword-tag" data-keyword="末影龙">末影龙</button>
+                    <button class="keyword-tag" data-keyword="建筑">建筑</button>
+                    <button class="keyword-tag" data-keyword="模组">模组</button>
+                </div>
+            </div>
+
+            <!-- 搜索结果区域 -->
+            <div class="search-results" id="searchResults">
+                <!-- 默认情况下这里是空的，结果会通过JavaScript动态添加 -->
+            </div>
+
+            <!-- 搜索结果模板 - 有结果时 -->
+            <template id="resultsTemplate">
+                <div class="results-heading">
+                    <h2 class="results-title">搜索结果</h2>
+                    <p class="results-count">找到 <span id="resultCount">3</span> 个结果</p>
+                </div>
+
+                <div class="result-cards">
+                    <div class="result-card">
+                        <img src="img/result-card-1.png" alt="红石工厂设计攻略" class="result-image">
+                        <div class="result-info">
+                            <h3 class="result-title">红石工厂设计攻略</h3>
+                            <p class="result-summary">本教程详细介绍了如何设计高效的红石自动化工厂，包括物品分类系统、自动熔炉和自动收集装置等。</p>
+                            <a href="share-detail.html?id=1" class="view-details-btn">查看详情</a>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <img src="img/result-card-2.png" alt="自动农场红石连接教程" class="result-image">
+                        <div class="result-info">
+                            <h3 class="result-title">自动农场红石连接教程</h3>
+                            <p class="result-summary">介绍如何使用红石、活塞和漏斗搭建全自动农场，实现作物种植、收获和存储的完全自动化。</p>
+                            <a href="share-detail.html?id=2" class="view-details-btn">查看详情</a>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <img src="img/result-card-3.png" alt="模组中红石传送门研究" class="result-image">
+                        <div class="result-info">
+                            <h3 class="result-title">模组中红石传送门研究</h3>
+                            <p class="result-summary">探索多个科技模组中红石能量与传送门的结合应用，包括跨维度传送、物品远距离运输等高级技术。</p>
+                            <a href="share-detail.html?id=3" class="view-details-btn">查看详情</a>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- 搜索结果模板 - 无结果时 -->
+            <template id="emptyTemplate">
+                <div class="empty-results">
+                    <img src="img/search-empty.png" alt="未找到结果" class="empty-image">
+                    <h2 class="empty-message">未找到相关内容</h2>
+                    <p class="empty-suggestion">尝试其他关键词或查看热门标签</p>
+                </div>
+            </template>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 MC百科. 保留所有权利。作者：杨汶川</p>
+            <p>本网站仅用于学习和分享，与Mojang和Microsoft没有官方关联。</p>
+            <p>联系方式：13325766744 | 邮箱：641339238@qq.com</p>
+        </div>
+    </footer>
+
+    <div class="custom-back-to-top" id="backToTop">
+        <a href="#"><img src="img/像素上箭头.png" alt="返回顶部"></a>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 搜索功能
+            const searchForm = document.getElementById('searchForm');
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            const resultsTemplate = document.getElementById('resultsTemplate');
+            const emptyTemplate = document.getElementById('emptyTemplate');
+            const keywordTags = document.querySelectorAll('.keyword-tag');
+
+            // 返回顶部按钮
+            const backToTopButton = document.getElementById('backToTop');
+
+            // 监听滚动事件
+            window.addEventListener('scroll', function () {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+            });
+
+            // 点击返回顶部
+            backToTopButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // 处理搜索表单提交
+            searchForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const keyword = searchInput.value.trim();
+                if (keyword) {
+                    performSearch(keyword);
+                }
+            });
+
+            // 点击热门关键词
+            keywordTags.forEach(tag => {
+                tag.addEventListener('click', function () {
+                    const keyword = this.getAttribute('data-keyword');
+                    searchInput.value = keyword;
+                    performSearch(keyword);
+                });
+            });
+
+            // 搜索功能
+            function performSearch(keyword) {
+                // 清空之前的搜索结果
+                searchResults.innerHTML = '';
+
+                // 滚动到搜索结果区域
+                searchResults.scrollIntoView({ behavior: 'smooth' });
+
+                // 模拟搜索，只有"红石"关键词有结果
+                if (keyword.includes('红石')) {
+                    // 显示有结果的模板
+                    const resultsContent = resultsTemplate.content.cloneNode(true);
+                    searchResults.appendChild(resultsContent);
+                } else {
+                    // 显示无结果的模板
+                    const emptyContent = emptyTemplate.content.cloneNode(true);
+                    searchResults.appendChild(emptyContent);
+                }
+            }
+
+            // 检查URL参数中是否有搜索关键词
+            const urlParams = new URLSearchParams(window.location.search);
+            const keywordParam = urlParams.get('keyword');
+
+            if (keywordParam) {
+                searchInput.value = keywordParam;
+                performSearch(keywordParam);
+            }
+        });
+    </script>
+</body>
+
+</html>
